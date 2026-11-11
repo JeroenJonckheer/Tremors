@@ -13,6 +13,9 @@ Gratis, open source en privé. Eén klein programma voor Windows.
 
 ---
 
+<p align="center"><img src="docs/demo.gif" alt="Dezelfde trillende hand zonder Tremors (links, de klik mist het vinkje) en met Tremors (rechts, de klik is raak)" width="100%"></p>
+<p align="center"><sub>Dezelfde trillende hand: links zoals Windows hem ziet, rechts door het filter van Tremors.</sub></p>
+
 Naarmate we ouder worden gaat de fijne motoriek achteruit, terwijl we de computer net
 zo hard nodig hebben als altijd. Een trillende hand laat de cursor schudden, klikken
 komen naast de knop terecht en de pagina scrolt per ongeluk.

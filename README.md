@@ -17,6 +17,10 @@ Free, open source and private. One small program for Windows.
 
 ---
 
+<p align="center"><img src="docs/demo.gif" alt="The same trembling hand without Tremors (left, the click misses the checkbox) and with Tremors (right, the click lands)" width="100%"></p>
+<p align="center"><sub>The same trembling hand, left as Windows sees it, right through the Tremors filter.
+Both paths are computed by the real filter; see <a href="tools/make_demo_gif.py">tools/make_demo_gif.py</a>.</sub></p>
+
 As we age, our fine motor skills may decline, while our reliance on computers remains
 as strong as ever. A trembling hand makes the cursor shake, clicks land next to the
 button and the page scrolls by accident.

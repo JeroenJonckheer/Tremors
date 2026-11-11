@@ -35,6 +35,7 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="Tremors.Tests" />
+    <InternalsVisibleTo Include="DemoTrace" />
   </ItemGroup>
 
 </Project>
