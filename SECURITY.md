@@ -10,6 +10,9 @@ does and does not do:
 - It writes only `%AppData%\Tremors\settings.json` and, when **Start with Windows**
   is on, one value named `Tremors` under
   `HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run`.
+- While it filters, it switches off Windows mouse acceleration ("Enhance pointer
+  precision") for the current session only. This is not saved to the user profile and is
+  undone when Tremors is paused or closed, and in any case at the next sign-in.
 - It needs no administrator rights.
 
 Every release is built from this repository by GitHub Actions and comes with a SHA-256

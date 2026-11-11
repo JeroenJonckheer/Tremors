@@ -31,7 +31,7 @@ gratis voor iedereen die hetzelfde nodig heeft.
 - **Klikken blijven op hun doel.** Op het moment van klikken stopt de cursor met glijden.
 - **Houdt het scrollwiel rustig.** Een trillend heen-en-weer wordt genegeerd, zodat een
   pagina niet op en neer springt.
-- **Eén schuifje.** Kies hoe sterk het filter is, van 0 (uit) tot 100.
+- **Eenvoudig in te stellen.** Eén schuifje voor de sterkte, en twee om fijn af te stemmen.
 - **Spreekt uw taal.** Nederlands, Engels, Frans of Duits, net als Windows.
 - **Verder niets.** Geen account, geen internet, geen reclame, geen gegevens verzamelen.
 
@@ -64,10 +64,20 @@ Het instellingenvenster:
 | Instelling | Betekenis |
 |---|---|
 | **Sterkte** (0-100) | Hoeveel trilling wordt weggefilterd. Begin bij 70. Trilt de cursor nog, zet hem hoger; voelt de muis traag, zet hem lager. 0 zet het filter uit. |
+| **Muissnelheid** (10-100%) | Hoe ver de cursor gaat bij een handbeweging. Lager maakt de trilling kleiner op het scherm; u beweegt de muis dan wat verder. Probeer 50-70% bij een sterke trilling. |
+| **Stilstandzone** (0-30 px) | De cursor blijft staan tot de hand verder beweegt dan dit. Zet hem hoger als de cursor nog springt terwijl u stil probeert te houden op een knop. |
 | **Scrollwiel stabiel houden** | Negeert een scroll de andere kant op vlak na een scroll; dat is meestal een trilling. |
 | **Starten met Windows** | Start Tremors vanzelf bij het aanmelden. |
 
 Elke wijziging werkt meteen en wordt onthouden.
+
+Zolang Tremors aanstaat, zet het de muisversnelling van Windows uit ("Verbeterde
+aanwijzerprecisie"), want die maakt snelle, trillende bewegingen groter. Uw eigen
+instelling komt terug zodra Tremors gepauzeerd of afgesloten wordt.
+
+**De juiste instellingen vinden:** begin met sterkte 70. Komen schokken nog door? Zet
+eerst de muissnelheid lager, dan de stilstandzone hoger, en dan pas de sterkte. Kies de
+laagste waarden waarbij de cursor rustig blijft; dan reageert de muis zo direct mogelijk.
 
 ### Tips voor mantelzorgers en familie
 

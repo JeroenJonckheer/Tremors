@@ -5,7 +5,7 @@ namespace Tremors;
 /// cursor position, computed in four steps:
 /// <list type="number">
 ///   <item><b>Raw position.</b> Every swallowed event adds its movement to a
-///   virtual "raw" cursor that follows the hand exactly.</item>
+///   virtual "raw" cursor that follows the hand, scaled by the pointer speed.</item>
 ///   <item><b>Intent.</b> The velocity of the hand, averaged over about a tenth of a
 ///   second. Trembling and short jerks go back and forth and average out; a deliberate
 ///   movement keeps going in one direction and builds up speed.</item>
@@ -28,21 +28,20 @@ internal sealed class Smoother
     /// <param name="IntentThreshold">Average hand speed (px/ms) below which movement counts as tremor.</param>
     /// <param name="IntentSpeed">Speed above the threshold (px/ms) at which smoothing halves.</param>
     /// <param name="IntentWindowMs">Time over which hand speed is averaged.</param>
-    /// <param name="MaxLeashPx">Leash radius.</param>
     /// <param name="MaxWheelGuardMs">Wheel debounce.</param>
     internal sealed record Tuning(
         double MaxTimeConstantMs = 500,
         double IntentThreshold = 0.5,
         double IntentSpeed = 0.2,
         double IntentWindowMs = 250,
-        double MaxLeashPx = 4,
         double MaxWheelGuardMs = 400);
 
     private const double MaxStepMs = 50; // cap for long pauses between updates
 
     private readonly Tuning _tuning;
     private double _timeConstant;
-    private double _leash;
+    private double _leash = 4;
+    private double _gain = 1;
     private double _wheelGuard;
     private bool _wheelEnabled = true;
 
@@ -87,9 +86,14 @@ internal sealed class Smoother
     {
         double k = Math.Clamp(intensity, 0, 100) / 100.0;
         _timeConstant = _tuning.MaxTimeConstantMs * Math.Pow(k, 1.5);
-        _leash = _tuning.MaxLeashPx * k;
         _wheelGuard = _tuning.MaxWheelGuardMs * k;
     }
+
+    /// <summary>Hand-to-cursor speed in percent; lower makes the tremor smaller on screen.</summary>
+    public void SetPointerSpeed(int percent) => _gain = Math.Clamp(percent, Settings.MinPointerSpeed, 100) / 100.0;
+
+    /// <summary>Radius in pixels within which the cursor stays put (the leash).</summary>
+    public void SetStillZone(int pixels) => _leash = Math.Clamp(pixels, 0, Settings.MaxStillZone);
 
     public void SetWheel(bool enabled)
     {
@@ -111,8 +115,8 @@ internal sealed class Smoother
             SyncTo(cursor, now); // first event, or something else moved the cursor
 
         var screen = _screen();
-        _rawX = Math.Clamp(_rawX + x - cursor.X, screen.Left, screen.Right - 1);
-        _rawY = Math.Clamp(_rawY + y - cursor.Y, screen.Top, screen.Bottom - 1);
+        _rawX = Math.Clamp(_rawX + (x - cursor.X) * _gain, screen.Left, screen.Right - 1);
+        _rawY = Math.Clamp(_rawY + (y - cursor.Y) * _gain, screen.Top, screen.Bottom - 1);
         Step(now);
     }
 

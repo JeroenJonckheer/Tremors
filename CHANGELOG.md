@@ -15,7 +15,9 @@ First release.
 - Leash: the cursor stays still while holding still on a target.
 - Click lock: the cursor stops gliding when a button is pressed.
 - Scroll wheel filter that ignores trembling flicks back and forth.
-- Tray icon with menu, settings window with a single strength slider.
+- Pointer speed and still zone settings for fine-tuning.
+- Windows mouse acceleration is switched off while filtering, so shakes are not magnified.
+- Tray icon with menu and a settings window.
 - Start with Windows, without administrator rights.
 - Interface in English, Dutch, French and German, following the Windows display language.
 - Single-file `Tremors.exe`, no installation or .NET runtime needed.

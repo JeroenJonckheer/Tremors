@@ -26,6 +26,8 @@ internal sealed class TrayApp : ApplicationContext
     {
         _settings = Store.Load(out bool firstRun);
         _filter.Configure(_settings.Intensity);
+        _filter.SetPointerSpeed(_settings.PointerSpeed);
+        _filter.SetStillZone(_settings.StillZone);
         _filter.SetWheel(_settings.Wheel);
         _mouse.Filter = OnMouse;
         _timer.Tick += (_, _) => OnTimer();
@@ -59,6 +61,22 @@ internal sealed class TrayApp : ApplicationContext
     {
         _settings.Intensity = Math.Clamp(value, 0, 100);
         _filter.Configure(_settings.Intensity);
+        Apply();
+    }
+
+    public void SetPointerSpeed(int percent)
+    {
+        _settings.PointerSpeed = percent;
+        _settings.Normalize();
+        _filter.SetPointerSpeed(_settings.PointerSpeed);
+        Apply();
+    }
+
+    public void SetStillZone(int pixels)
+    {
+        _settings.StillZone = pixels;
+        _settings.Normalize();
+        _filter.SetStillZone(_settings.StillZone);
         Apply();
     }
 
@@ -97,6 +115,8 @@ internal sealed class TrayApp : ApplicationContext
             _filter.Reset();
         }
         _timer.Enabled = _mouse.Installed;
+        if (_mouse.Installed && _filter.Active) PointerAcceleration.Suspend();
+        else PointerAcceleration.Restore();
 
         _activeItem.Checked = _settings.Enabled;
         _autoStartItem.Checked = _settings.AutoStart;
@@ -155,6 +175,7 @@ internal sealed class TrayApp : ApplicationContext
     {
         _mouse.Dispose();
         _timer.Dispose();
+        PointerAcceleration.Restore();
         _form?.Close();
         _tray.Visible = false;
         _tray.ContextMenuStrip?.Dispose();

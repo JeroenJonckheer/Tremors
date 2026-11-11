@@ -114,10 +114,34 @@ public class SmootherTests
     [Fact]
     public void Stronger_setting_damps_more()
     {
-        int Wander(int intensity) => Spread(Follow(new Rig(intensity), Tremor, 3000).Skip(60));
+        int Reach(int intensity) => Follow(new Rig(intensity), Jerk, 600).Max(p => p.X) - 960;
 
-        Assert.True(Wander(100) < Wander(30));
-        Assert.True(Wander(30) < Wander(1));
+        Assert.True(Reach(100) < Reach(70));
+        Assert.True(Reach(70) < Reach(30));
+        Assert.True(Reach(30) < Reach(1));
+    }
+
+    [Fact]
+    public void Lower_pointer_speed_shrinks_the_movement()
+    {
+        var rig = new Rig(intensity: 70, x: 200, y: 200);
+        rig.Filter.SetPointerSpeed(50);
+
+        Follow(rig, t => (2000 * t, 0), 300); // the hand moves 600 px
+        rig.Wait(1000);
+
+        Assert.InRange(rig.Cursor.X, 500 - 5, 500); // the cursor 300 px
+    }
+
+    [Fact]
+    public void Still_zone_absorbs_jerks_smaller_than_the_zone()
+    {
+        var rig = new Rig(intensity: 30);
+        rig.Filter.SetStillZone(25);
+
+        var cursor = Follow(rig, t => (25 * Math.Sin(2 * Math.PI * 4 * t), 0), 2000);
+
+        Assert.All(cursor, p => Assert.Equal(960, p.X));
     }
 
     [Fact]

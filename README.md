@@ -35,7 +35,7 @@ everyone who needs the same.
 - **Keeps clicks on target.** At the moment you click, the cursor stops gliding.
 - **Steadies the scroll wheel.** A trembling flick back and forth is ignored, so a
   page does not jump up and down.
-- **One slider.** Choose how strong the filter is, from 0 (off) to 100.
+- **Simple to set up.** One slider for the strength, two more for fine-tuning.
 - **Speaks your language.** English, Dutch, French or German, following Windows.
 - **Nothing else.** No account, no internet, no ads, no data collection.
 
@@ -68,10 +68,20 @@ The settings window:
 | Setting | Meaning |
 |---|---|
 | **Strength** (0-100) | How much trembling is filtered. Start at 70. Raise it if the cursor still shakes; lower it if the mouse feels slow. 0 turns the filter off. |
+| **Pointer speed** (10-100%) | How far the cursor moves for a given hand movement. Lower makes the tremor smaller on screen; you then move the mouse a bit further. Try 50-70% for a strong tremor. |
+| **Still zone** (0-30 px) | The cursor stays put until the hand moves further than this. Raise it if the cursor still jumps when you try to hold still on a button. |
 | **Steady scroll wheel** | Ignores a scroll in the opposite direction right after a scroll, which is usually a tremor. |
 | **Start with Windows** | Starts Tremors automatically when you sign in. |
 
 Every change takes effect immediately and is remembered.
+
+While Tremors is on, it switches off the Windows mouse acceleration ("Enhance pointer
+precision"), because acceleration makes fast trembling movements larger. Your own
+setting returns as soon as Tremors is paused or closed.
+
+**Finding the right settings:** start with strength 70. Shakes still come through?
+Lower the pointer speed first, then raise the still zone, then the strength. Pick the
+lowest values that keep the cursor calm, so the mouse stays as direct as possible.
 
 ### Tips for helpers and family
 

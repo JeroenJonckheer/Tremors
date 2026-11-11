@@ -20,7 +20,7 @@ internal static class Store
         {
             if (!firstRun && JsonSerializer.Deserialize<Settings>(File.ReadAllText(FilePath)) is { } s)
             {
-                s.Intensity = Math.Clamp(s.Intensity, 0, 100);
+                s.Normalize();
                 return s;
             }
         }

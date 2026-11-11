@@ -13,6 +13,7 @@ mechanism and the filter, so that anyone can check, tune or improve it.
 | [`Smoother.cs`](../src/Tremors/Smoother.cs) | The tremor filter; testable without a real mouse |
 | [`SettingsForm.cs`](../src/Tremors/SettingsForm.cs) | The settings window |
 | [`Settings.cs`](../src/Tremors/Settings.cs), [`Store.cs`](../src/Tremors/Store.cs) | The settings and their JSON file |
+| [`PointerAcceleration.cs`](../src/Tremors/PointerAcceleration.cs) | Switches Windows mouse acceleration off while filtering |
 | [`AutoStart.cs`](../src/Tremors/AutoStart.cs) | Start with Windows (per-user Run key) |
 | [`Text.cs`](../src/Tremors/Text.cs) | All user-facing text: English, Dutch, French, German |
 | [`TrayIcon.cs`](../src/Tremors/TrayIcon.cs) | Draws the tray icon in code (green = on, grey = paused) |
@@ -25,6 +26,10 @@ Windows then calls Tremors for every physical mouse event *before* any window re
 Changing the position inside such a hook has no effect: Windows ignores it. So for every
 movement Tremors does this instead:
 
+0. While filtering, Windows mouse acceleration ("Enhance pointer precision") is switched
+   off for the session, as SteadyMouse also does. Acceleration enlarges fast movements,
+   and trembling is fast, so shakes would otherwise reach the filter magnified. The
+   change is not saved to the user profile and is undone on pause or exit.
 1. Read where Windows *would* put the cursor (`pt` in the event) and where it is now.
    The difference is the movement of the hand, including the user's pointer speed and
    acceleration settings.
@@ -40,7 +45,7 @@ pass through untouched.
 The filter keeps these positions:
 
 ```
-raw     where the hand is: the sum of all swallowed movement
+raw     where the hand is: the sum of all swallowed movement, times the pointer speed
 mid     first filter stage
 smooth  second filter stage
 cursor  what is on screen
@@ -84,10 +89,12 @@ Tremors from feeling sluggish while still absorbing jerks.
 
 ### 3. Leash
 
-The cursor is tied to `smooth` with a short leash of up to 4 px (`4 px * k`). While
-`smooth` stays within the leash, the cursor does not move at all. Once it moves further,
-the cursor follows it at leash distance. This removes the last pixel of wobble when
-holding still on a small target.
+The cursor is tied to `smooth` with a leash: the **still zone** setting, 4 px by
+default and up to 30 px. While `smooth` stays within the leash, the cursor does not move
+at all. Once it moves further, the cursor follows it at leash distance. A small zone
+removes the last pixel of wobble when holding still on a target; a larger zone also
+absorbs bigger jerks, at the cost of having to move a little further before the cursor
+starts to follow (the "lazy mouse" or "pulled string" technique from drawing tools).
 
 ### 4. Click
 
