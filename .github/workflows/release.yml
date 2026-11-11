@@ -12,9 +12,9 @@ jobs:
   release:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v6
         with:
           global-json-file: global.json
 
@@ -33,7 +33,7 @@ jobs:
           $hash = (Get-FileHash dist/Tremors.exe -Algorithm SHA256).Hash.ToLower()
           "$hash  Tremors.exe" | Out-File dist/Tremors.exe.sha256 -Encoding ascii
 
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v3
         with:
           files: |
             dist/Tremors.exe
