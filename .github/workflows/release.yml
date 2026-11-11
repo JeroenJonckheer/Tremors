@@ -1,0 +1,41 @@
+name: Release
+
+# Push a tag like v1.0.0 to build Tremors.exe and publish it as a GitHub release.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Test
+        run: dotnet test -c Release
+
+      - name: Publish
+        shell: pwsh
+        run: |
+          $version = "${{ github.ref_name }}".TrimStart("v")
+          dotnet publish src/Tremors/Tremors.csproj -c Release -p:Version=$version
+
+      - name: Checksum
+        shell: pwsh
+        run: |
+          $hash = (Get-FileHash dist/Tremors.exe -Algorithm SHA256).Hash.ToLower()
+          "$hash  Tremors.exe" | Out-File dist/Tremors.exe.sha256 -Encoding ascii
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/Tremors.exe
+            dist/Tremors.exe.sha256
+          generate_release_notes: true

@@ -1,0 +1,11 @@
+# Build output
+bin/
+obj/
+dist/
+*.user
+.vs/
+TestResults/
+
+# Local notes, not part of the project
+OVERDRACHT*.md
+CLAUDE.md
