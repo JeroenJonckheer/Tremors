@@ -4,8 +4,8 @@ using System.Runtime.InteropServices;
 namespace Tremors;
 
 /// <summary>
-/// Draws the Tremors icon in code: a steady mouse pointer with two faint, offset copies
-/// behind it, the tremor that is being absorbed. Navy and mint when active, grey when
+/// Draws the Tremors icon in code: a steady mouse pointer with two mint echoes behind
+/// it, the tremor that is being absorbed. Navy and mint when active, grey when
 /// paused. The same design is in Tremors.ico and docs/icon.png (tools/make_icon.py).
 /// </summary>
 internal static class TrayIcon
@@ -14,10 +14,10 @@ internal static class TrayIcon
     private static readonly PointF[] Arrow =
         [new(0, 0), new(0, 0.895f), new(0.211f, 0.684f), new(0.368f, 1f), new(0.474f, 0.947f), new(0.316f, 0.632f), new(0.632f, 0.632f)];
 
-    private const float Height = 0.56f;   // pointer height, fraction of the icon
-    private const float Rounding = 0.018f; // softens the pointer's corners
+    private const float Height = 0.52f;   // pointer height, fraction of the icon
+    private const float Rounding = 0.02f; // softens the pointer's corners
 
-    private static readonly (float X, float Y, int Alpha)[] Ghosts = [(-0.07f, 0.025f, 80), (0.055f, -0.045f, 130)];
+    private static readonly (float X, float Y, int Alpha)[] Ghosts = [(-0.13f, 0.05f, 150), (0.10f, -0.09f, 230)]; // far and strong: visible at 16 px
 
     private static readonly Color Navy = Color.FromArgb(28, 52, 78);
     private static readonly Color Grey = Color.FromArgb(120, 128, 138);

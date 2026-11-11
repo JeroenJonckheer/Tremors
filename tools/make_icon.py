@@ -1,5 +1,7 @@
-"""Renders the Tremors icon: a steady mouse pointer with two faint, offset copies behind
-it, the tremor that is being absorbed. Navy and mint when active, grey when paused.
+"""Renders the Tremors icon: a steady mouse pointer with two mint echoes behind it, the
+tremor that is being absorbed. The echoes are offset far and drawn strongly on purpose,
+so they stay visible at 16 px in the notification area. Navy and mint when active, grey
+when paused.
 
 Usage: python tools/make_icon.py <preview.png> [src/Tremors/Tremors.ico docs/icon.png]
 
@@ -12,9 +14,9 @@ S = 1024
 
 # Classic pointer, tip at (0, 0), height 1.
 ARROW = [(0, 0), (0, 0.895), (0.211, 0.684), (0.368, 1.0), (0.474, 0.947), (0.316, 0.632), (0.632, 0.632)]
-HEIGHT = 0.56                                   # pointer height, fraction of the icon
-GHOSTS = [((-0.07, 0.025), 80), ((0.055, -0.045), 130)]  # offset (fraction), alpha
-ROUNDING = 0.018                                # softens the pointer's corners
+HEIGHT = 0.52                                   # pointer height, fraction of the icon
+GHOSTS = [((-0.13, 0.05), 150), ((0.10, -0.09), 230)]  # offset (fraction), alpha
+ROUNDING = 0.02                                # softens the pointer's corners
 
 NAVY, GREY = (28, 52, 78), (120, 128, 138)
 WHITE, MINT, PALE = (240, 246, 248), (110, 222, 172), (210, 216, 222)
