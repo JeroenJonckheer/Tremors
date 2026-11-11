@@ -13,9 +13,11 @@ mechanism and the filter, so that anyone can check, tune or improve it.
 | [`Smoother.cs`](../src/Tremors/Smoother.cs) | The tremor filter; testable without a real mouse |
 | [`SettingsForm.cs`](../src/Tremors/SettingsForm.cs) | The settings window |
 | [`Settings.cs`](../src/Tremors/Settings.cs), [`Store.cs`](../src/Tremors/Store.cs) | The settings and their JSON file |
+| [`ClickGuard.cs`](../src/Tremors/ClickGuard.cs) | Ignores accidental clicks (hold to click) |
+| [`Flags.cs`](../src/Tremors/Flags.cs) | Draws the language flags in code |
 | [`PointerAcceleration.cs`](../src/Tremors/PointerAcceleration.cs) | Switches Windows mouse acceleration off while filtering |
 | [`AutoStart.cs`](../src/Tremors/AutoStart.cs) | Start with Windows (per-user Run key) |
-| [`Text.cs`](../src/Tremors/Text.cs) | All user-facing text: English, Dutch, French, German |
+| [`Text.cs`](../src/Tremors/Text.cs) | All user-facing text: English, Dutch, French, German; switchable at runtime |
 | [`TrayIcon.cs`](../src/Tremors/TrayIcon.cs) | Draws the tray icon in code (green = on, grey = paused) |
 
 ## Intercepting the mouse
@@ -101,7 +103,19 @@ starts to follow (the "lazy mouse" or "pulled string" technique from drawing too
 On a button press the remaining glide is dropped (`raw`, `mid`, `smooth` and the velocity jump to the cursor),
 so the cursor does not drift while clicking or double-clicking.
 
-### 5. Scroll wheel
+### 5. Hold to click
+
+With **hold to click** set (for example 150 ms), a physical button-down is swallowed and
+the cursor stays put. If the button is released sooner, the click is dropped: a
+trembling tap. If it is still down after the hold time, Tremors sends the button-down
+to Windows itself (`SendInput`), and the physical button-up later passes normally. So:
+
+- dragging works: the button stays down for as long as the user holds it;
+- double-clicking works: both clicks are delayed by the same amount, so the interval
+  between them is unchanged;
+- each button (left, right, middle) is handled on its own.
+
+### 6. Scroll wheel
 
 A tremor often turns the wheel one notch forward and immediately back. Tremors drops a
 notch in the opposite direction when it comes within `400 ms * k` of the previous notch.

@@ -5,6 +5,7 @@ public sealed class Settings
 {
     public const int MinPointerSpeed = 10;
     public const int MaxStillZone = 30;
+    public const int MaxClickHold = 500;
 
     public bool Enabled { get; set; } = true;
 
@@ -17,9 +18,15 @@ public sealed class Settings
     /// <summary>Distance in pixels the hand can wander before the cursor follows, 0 to <see cref="MaxStillZone"/>.</summary>
     public int StillZone { get; set; } = 4;
 
+    /// <summary>A click only counts when held this many milliseconds; 0 = every click counts.</summary>
+    public int ClickHold { get; set; }
+
     public bool Wheel { get; set; } = true;
 
     public bool AutoStart { get; set; }
+
+    /// <summary>Interface language ("nl", "en", "fr", "de"); null follows Windows.</summary>
+    public string? Language { get; set; }
 
     /// <summary>Brings values from an edited or older file back into range.</summary>
     public void Normalize()
@@ -27,5 +34,6 @@ public sealed class Settings
         Intensity = Math.Clamp(Intensity, 0, 100);
         PointerSpeed = Math.Clamp(PointerSpeed, MinPointerSpeed, 100);
         StillZone = Math.Clamp(StillZone, 0, MaxStillZone);
+        ClickHold = Math.Clamp(ClickHold, 0, MaxClickHold);
     }
 }

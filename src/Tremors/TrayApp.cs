@@ -8,13 +8,19 @@ internal sealed class TrayApp : ApplicationContext
 {
     private readonly Settings _settings;
     private readonly Smoother _filter = new();
+    private readonly ClickGuard _clicks = new(Mouse.SendButtonDown);
     private readonly Mouse _mouse = new();
     private readonly System.Windows.Forms.Timer _timer = new() { Interval = 10 };
     private readonly NotifyIcon _tray;
     private readonly ToolStripMenuItem _activeItem;
     private readonly ToolStripMenuItem _autoStartItem;
+    private readonly ToolStripMenuItem _settingsItem;
+    private readonly ToolStripMenuItem _quitItem;
     private readonly Icon _iconOn = TrayIcon.Create(active: true);
     private readonly Icon _iconOff = TrayIcon.Create(active: false);
+    private readonly EventWaitHandle _showSettings = new(false, EventResetMode.AutoReset, Program.ShowSettingsEvent);
+    private readonly RegisteredWaitHandle _showSettingsWait;
+    private readonly Control _ui = new();
     private SettingsForm? _form;
 
     /// <summary>Raised after any setting changed, so open windows can refresh.</summary>
@@ -25,10 +31,12 @@ internal sealed class TrayApp : ApplicationContext
     public TrayApp()
     {
         _settings = Store.Load(out bool firstRun);
+        Text.Use(_settings.Language);
         _filter.Configure(_settings.Intensity);
         _filter.SetPointerSpeed(_settings.PointerSpeed);
         _filter.SetStillZone(_settings.StillZone);
         _filter.SetWheel(_settings.Wheel);
+        _clicks.HoldMs = _settings.ClickHold;
         _mouse.Filter = OnMouse;
         _timer.Tick += (_, _) => OnTimer();
         if (_settings.AutoStart) AutoStart.Enable(); // keep the path current if the exe moved
@@ -37,13 +45,20 @@ internal sealed class TrayApp : ApplicationContext
         _autoStartItem = new ToolStripMenuItem(Text.StartWithWindows, null, (_, _) => SetAutoStart(!_settings.AutoStart));
         var menu = new ContextMenuStrip();
         menu.Items.Add(_activeItem);
-        menu.Items.Add(new ToolStripMenuItem(Text.Settings, null, (_, _) => ShowSettings()));
+        _settingsItem = new ToolStripMenuItem(Text.Settings, null, (_, _) => ShowSettings());
+        menu.Items.Add(_settingsItem);
         menu.Items.Add(_autoStartItem);
         menu.Items.Add(new ToolStripSeparator());
-        menu.Items.Add(new ToolStripMenuItem(Text.Quit, null, (_, _) => ExitThread()));
+        _quitItem = new ToolStripMenuItem(Text.Quit, null, (_, _) => ExitThread());
+        menu.Items.Add(_quitItem);
 
         _tray = new NotifyIcon { ContextMenuStrip = menu, Visible = true };
         _tray.MouseClick += (_, e) => { if (e.Button == MouseButtons.Left) ShowSettings(); };
+
+        // A second launch of Tremors.exe signals this event: open the settings.
+        _ui.CreateControl();
+        _showSettingsWait = ThreadPool.RegisterWaitForSingleObject(_showSettings,
+            (_, _) => _ui.BeginInvoke(ShowSettings), null, Timeout.Infinite, executeOnlyOnce: false);
 
         Apply();
 
@@ -80,6 +95,26 @@ internal sealed class TrayApp : ApplicationContext
         Apply();
     }
 
+    public void SetClickHold(int milliseconds)
+    {
+        _settings.ClickHold = milliseconds;
+        _settings.Normalize();
+        _clicks.HoldMs = _settings.ClickHold;
+        Apply();
+    }
+
+    /// <summary>Switches the interface language; open windows follow through <see cref="Changed"/>.</summary>
+    public void SetLanguage(string code)
+    {
+        _settings.Language = code;
+        Text.Use(code);
+        _activeItem.Text = Text.Active;
+        _settingsItem.Text = Text.Settings;
+        _autoStartItem.Text = Text.StartWithWindows;
+        _quitItem.Text = Text.Quit;
+        Apply();
+    }
+
     public void SetWheel(bool on)
     {
         _settings.Wheel = on;
@@ -113,6 +148,7 @@ internal sealed class TrayApp : ApplicationContext
         {
             _mouse.Uninstall();
             _filter.Reset();
+            _clicks.Reset();
         }
         _timer.Enabled = _mouse.Installed;
         if (_mouse.Installed && _filter.Active) PointerAcceleration.Suspend();
@@ -136,6 +172,7 @@ internal sealed class TrayApp : ApplicationContext
         switch (message)
         {
             case Mouse.WM_MOUSEMOVE:
+                if (_clicks.Waiting) return false; // keep the cursor where the button went down
                 if (!_filter.Active) return true;
                 _filter.Move(data.pt.X, data.pt.Y, Mouse.CursorPosition(), now);
                 return false;
@@ -145,21 +182,36 @@ internal sealed class TrayApp : ApplicationContext
                 return _filter.Wheel((short)(data.mouseData >> 16), now);
 
             case Mouse.WM_LBUTTONDOWN:
+                _filter.Click();
+                return _clicks.Down(MouseButton.Left, now);
             case Mouse.WM_RBUTTONDOWN:
+                _filter.Click();
+                return _clicks.Down(MouseButton.Right, now);
             case Mouse.WM_MBUTTONDOWN:
+                _filter.Click();
+                return _clicks.Down(MouseButton.Middle, now);
             case Mouse.WM_XBUTTONDOWN:
                 _filter.Click();
                 return true;
+
+            case Mouse.WM_LBUTTONUP:
+                return _clicks.Up(MouseButton.Left);
+            case Mouse.WM_RBUTTONUP:
+                return _clicks.Up(MouseButton.Right);
+            case Mouse.WM_MBUTTONUP:
+                return _clicks.Up(MouseButton.Middle);
 
             default:
                 return true;
         }
     }
 
-    /// <summary>Lets the cursor finish gliding after the hand has stopped.</summary>
+    /// <summary>Lets the cursor finish gliding and lets held buttons count.</summary>
     private void OnTimer()
     {
-        if (_filter.Settling) _filter.Step(Environment.TickCount64);
+        long now = Environment.TickCount64;
+        _clicks.Tick(now);
+        if (_filter.Settling) _filter.Step(now);
     }
 
     private void ShowSettings()
@@ -175,6 +227,9 @@ internal sealed class TrayApp : ApplicationContext
     {
         _mouse.Dispose();
         _timer.Dispose();
+        _showSettingsWait.Unregister(null);
+        _showSettings.Dispose();
+        _ui.Dispose();
         PointerAcceleration.Restore();
         _form?.Close();
         _tray.Visible = false;

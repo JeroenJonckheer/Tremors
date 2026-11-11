@@ -32,4 +32,37 @@ public class TextTests
         foreach (var property in language.GetType().GetProperties())
             Assert.False(string.IsNullOrWhiteSpace((string?)property.GetValue(language)), property.Name);
     }
+
+    [Fact]
+    public void Chosen_language_can_be_switched_and_reset()
+    {
+        try
+        {
+            Text.Use("fr");
+            Assert.Equal("fr", Text.CurrentCode);
+            Assert.Equal("Terminé", Text.Done);
+
+            Text.Use("de");
+            Assert.Equal("Fertig", Text.Done);
+
+            Text.Use("xx"); // unknown: follow Windows again
+            Assert.Equal(Text.Pick(CultureInfo.CurrentUICulture).Code, Text.CurrentCode);
+        }
+        finally
+        {
+            Text.Use(null);
+        }
+    }
+
+    [Fact]
+    public void Every_language_has_a_flag_and_a_unique_code()
+    {
+        Assert.Equal(Text.All.Count, Text.All.Select(l => l.Code).Distinct().Count());
+
+        foreach (var language in Text.All)
+        {
+            using var flag = Flags.Draw(language.Code, 30, 20);
+            Assert.Equal(new Size(30, 20), flag.Size);
+        }
+    }
 }

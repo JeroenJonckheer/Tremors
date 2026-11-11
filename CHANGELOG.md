@@ -4,6 +4,21 @@ All notable changes to Tremors are listed here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the
 project uses [semantic versioning](https://semver.org/).
 
+## [1.1.0] - 2026-11-11
+
+### Added
+
+- Hold to click: ignores accidental clicks. A click only counts when the button is held
+  for a set time (0-500 ms, off by default). Dragging and double-clicking keep working.
+- Language flags in the settings window; the choice is remembered. Switching happens in
+  place, without reopening the window.
+- Starting `Tremors.exe` while it is already running opens its settings window.
+
+### Changed
+
+- Settings window in two columns, so it fits on small laptop screens, and sized correctly
+  at every display scaling.
+
 ## [1.0.0] - 2026-11-11
 
 First release.
@@ -22,4 +37,5 @@ First release.
 - Interface in English, Dutch, French and German, following the Windows display language.
 - Single-file `Tremors.exe`, no installation or .NET runtime needed.
 
+[1.1.0]: https://github.com/JeroenJonckheer/Tremors/releases/tag/v1.1.0
 [1.0.0]: https://github.com/JeroenJonckheer/Tremors/releases/tag/v1.0.0

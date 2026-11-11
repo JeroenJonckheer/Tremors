@@ -29,10 +29,13 @@ gratis voor iedereen die hetzelfde nodig heeft.
 - **Houdt de cursor stil.** Trillingen en plotselinge schokken worden weggefilterd; wie stilhoudt op een knop,
   houdt ook de cursor stil.
 - **Klikken blijven op hun doel.** Op het moment van klikken stopt de cursor met glijden.
+- **Negeert per ongeluk geklikt** (optioneel). Een klik telt pas als de knop even wordt
+  vastgehouden; een trillend tikje wordt genegeerd. Slepen en dubbelklikken werken gewoon.
 - **Houdt het scrollwiel rustig.** Een trillend heen-en-weer wordt genegeerd, zodat een
   pagina niet op en neer springt.
 - **Eenvoudig in te stellen.** Eén schuifje voor de sterkte, en twee om fijn af te stemmen.
-- **Spreekt uw taal.** Nederlands, Engels, Frans of Duits, net als Windows.
+- **Spreekt uw taal.** Nederlands, Engels, Frans of Duits. Volgt Windows, of kies een
+  vlag in het instellingenvenster.
 - **Verder niets.** Geen account, geen internet, geen reclame, geen gegevens verzamelen.
 
 ## Installeren
@@ -55,6 +58,7 @@ Er hoeft niets geïnstalleerd te worden: geen beheerdersrechten en geen .NET nod
 | Waar | Wat |
 |---|---|
 | **Linksklik** op het icoon | Opent het instellingenvenster |
+| `Tremors.exe` nog eens starten | Opent ook het instellingenvenster |
 | **Rechtsklik** op het icoon | Menu: **Actief** (aan/uit), **Instellingen**, **Starten met Windows**, **Tremors stoppen** |
 | Groene stip | Tremors houdt de muis stabiel |
 | Grijze stip | Tremors staat op pauze |
@@ -66,6 +70,8 @@ Het instellingenvenster:
 | **Sterkte** (0-100) | Hoeveel trilling wordt weggefilterd. Begin bij 70. Trilt de cursor nog, zet hem hoger; voelt de muis traag, zet hem lager. 0 zet het filter uit. |
 | **Muissnelheid** (10-100%) | Hoe ver de cursor gaat bij een handbeweging. Lager maakt de trilling kleiner op het scherm; u beweegt de muis dan wat verder. Probeer 50-70% bij een sterke trilling. |
 | **Stilstandzone** (0-30 px) | De cursor blijft staan tot de hand verder beweegt dan dit. Zet hem hoger als de cursor nog springt terwijl u stil probeert te houden op een knop. |
+| **Vasthouden om te klikken** (0-500 ms) | Een klik telt pas als de knop zo lang wordt ingedrukt; kortere tikjes worden genegeerd. 0 = uit. Probeer 100-200 ms als er per ongeluk geklikt wordt. |
+| Vlaggen (rechtsboven) | Taal van Tremors. |
 | **Scrollwiel stabiel houden** | Negeert een scroll de andere kant op vlak na een scroll; dat is meestal een trilling. |
 | **Starten met Windows** | Start Tremors vanzelf bij het aanmelden. |
 

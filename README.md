@@ -33,10 +33,13 @@ everyone who needs the same.
 - **Steadies the cursor.** Trembling and sudden jerks are smoothed away; holding still on a button
   keeps the cursor still.
 - **Keeps clicks on target.** At the moment you click, the cursor stops gliding.
+- **Ignores accidental clicks** (optional). A click only counts when the button is held
+  a moment; a trembling tap is ignored. Dragging and double-clicking still work.
 - **Steadies the scroll wheel.** A trembling flick back and forth is ignored, so a
   page does not jump up and down.
 - **Simple to set up.** One slider for the strength, two more for fine-tuning.
-- **Speaks your language.** English, Dutch, French or German, following Windows.
+- **Speaks your language.** English, Dutch, French or German. It follows Windows, or
+  pick a flag in the settings window.
 - **Nothing else.** No account, no internet, no ads, no data collection.
 
 ## Install
@@ -59,6 +62,7 @@ No installation, no administrator rights and no .NET download are needed.
 | Where | What |
 |---|---|
 | **Left-click** the icon | Opens the settings window |
+| Start `Tremors.exe` again | Also opens the settings window |
 | **Right-click** the icon | Menu: **Active** (on/off), **Settings**, **Start with Windows**, **Quit** |
 | Green dot | Tremors is steadying the mouse |
 | Grey dot | Tremors is paused |
@@ -70,6 +74,8 @@ The settings window:
 | **Strength** (0-100) | How much trembling is filtered. Start at 70. Raise it if the cursor still shakes; lower it if the mouse feels slow. 0 turns the filter off. |
 | **Pointer speed** (10-100%) | How far the cursor moves for a given hand movement. Lower makes the tremor smaller on screen; you then move the mouse a bit further. Try 50-70% for a strong tremor. |
 | **Still zone** (0-30 px) | The cursor stays put until the hand moves further than this. Raise it if the cursor still jumps when you try to hold still on a button. |
+| **Hold to click** (0-500 ms) | A click only counts when the button is held this long; shorter taps are ignored. 0 = off. Try 100-200 ms if clicks happen by accident. |
+| Flags (top right) | Interface language. |
 | **Steady scroll wheel** | Ignores a scroll in the opposite direction right after a scroll, which is usually a tremor. |
 | **Start with Windows** | Starts Tremors automatically when you sign in. |
 

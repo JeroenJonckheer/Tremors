@@ -16,8 +16,11 @@ internal sealed class Mouse : IDisposable
 {
     public const int WM_MOUSEMOVE = 0x0200;
     public const int WM_LBUTTONDOWN = 0x0201;
+    public const int WM_LBUTTONUP = 0x0202;
     public const int WM_RBUTTONDOWN = 0x0204;
+    public const int WM_RBUTTONUP = 0x0205;
     public const int WM_MBUTTONDOWN = 0x0207;
+    public const int WM_MBUTTONUP = 0x0208;
     public const int WM_MOUSEWHEEL = 0x020A;
     public const int WM_XBUTTONDOWN = 0x020B;
     public const int WM_MOUSEHWHEEL = 0x020E;
@@ -26,6 +29,10 @@ internal sealed class Mouse : IDisposable
     public const uint LLMHF_INJECTED = 0x01;
 
     private const int WH_MOUSE_LL = 14;
+    private const uint INPUT_MOUSE = 0;
+    private const uint MOUSEEVENTF_LEFTDOWN = 0x0002;
+    private const uint MOUSEEVENTF_RIGHTDOWN = 0x0008;
+    private const uint MOUSEEVENTF_MIDDLEDOWN = 0x0020;
 
     [StructLayout(LayoutKind.Sequential)]
     public struct POINT
@@ -48,6 +55,24 @@ internal sealed class Mouse : IDisposable
     public Func<int, MSLLHOOKSTRUCT, bool>? Filter { get; set; }
 
     public bool Installed => _hook != IntPtr.Zero;
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct MOUSEINPUT
+    {
+        public int dx;
+        public int dy;
+        public uint mouseData;
+        public uint dwFlags;
+        public uint time;
+        public IntPtr dwExtraInfo;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct INPUT // MOUSEINPUT is the largest member of the native union
+    {
+        public uint type;
+        public MOUSEINPUT mi;
+    }
 
     private delegate IntPtr HookProc(int nCode, IntPtr wParam, IntPtr lParam);
 
@@ -85,6 +110,25 @@ internal sealed class Mouse : IDisposable
     {
         SetCursorPos(x, y);
         return CursorPosition();
+    }
+
+    /// <summary>Presses a button at the current cursor position, as if the user did.</summary>
+    public static void SendButtonDown(MouseButton button)
+    {
+        var input = new INPUT
+        {
+            type = INPUT_MOUSE,
+            mi = new MOUSEINPUT
+            {
+                dwFlags = button switch
+                {
+                    MouseButton.Left => MOUSEEVENTF_LEFTDOWN,
+                    MouseButton.Right => MOUSEEVENTF_RIGHTDOWN,
+                    _ => MOUSEEVENTF_MIDDLEDOWN,
+                },
+            },
+        };
+        SendInput(1, [input], Marshal.SizeOf<INPUT>());
     }
 
     private IntPtr Callback(int nCode, IntPtr wParam, IntPtr lParam)
@@ -126,4 +170,7 @@ internal sealed class Mouse : IDisposable
     [DllImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool SetCursorPos(int x, int y);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    private static extern uint SendInput(uint nInputs, INPUT[] pInputs, int cbSize);
 }
