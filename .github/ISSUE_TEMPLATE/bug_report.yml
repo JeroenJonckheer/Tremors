@@ -1,0 +1,32 @@
+name: Something does not work
+description: Report a problem with Tremors
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Tremors version
+      description: Right-click Tremors.exe → Properties → Details → Product version.
+      placeholder: "1.0.0"
+  - type: input
+    id: windows
+    attributes:
+      label: Windows version
+      placeholder: "Windows 11 23H2"
+  - type: input
+    id: strength
+    attributes:
+      label: Strength setting
+      placeholder: "70"
+  - type: textarea
+    id: setup
+    attributes:
+      label: Mouse and screens
+      description: Type of mouse, trackball or touchpad, number of monitors, display scaling.
