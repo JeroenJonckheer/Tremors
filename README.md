@@ -11,7 +11,9 @@ Free, open source and private. One small program for Windows.
 [![Release](https://img.shields.io/github/v/release/JeroenJonckheer/Tremors)](https://github.com/JeroenJonckheer/Tremors/releases/latest)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-[**Download Tremors.exe**](https://github.com/JeroenJonckheer/Tremors/releases/latest) · [Nederlands](README.nl.md) · [How it works](docs/how-it-works.md)
+[**Download Tremors.exe**](https://github.com/JeroenJonckheer/Tremors/releases/latest) · [How it works](docs/how-it-works.md)
+
+**English** · [Nederlands](README.nl.md) · [Français](README.fr.md) · [Deutsch](README.de.md)
 
 </div>
 

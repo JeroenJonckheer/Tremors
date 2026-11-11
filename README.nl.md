@@ -7,13 +7,15 @@
 **Een stabiele muis voor trillende handen.**
 Gratis, open source en privé. Eén klein programma voor Windows.
 
-[**Download Tremors.exe**](https://github.com/JeroenJonckheer/Tremors/releases/latest) · [English](README.md) · [Hoe het werkt (Engels)](docs/how-it-works.md)
+[**Download Tremors.exe**](https://github.com/JeroenJonckheer/Tremors/releases/latest) · [Hoe het werkt (Engels)](docs/how-it-works.md)
+
+[English](README.md) · **Nederlands** · [Français](README.fr.md) · [Deutsch](README.de.md)
 
 </div>
 
 ---
 
-<p align="center"><img src="docs/demo.gif" alt="Dezelfde trillende hand zonder Tremors (links, de klik mist het vinkje) en met Tremors (rechts, de klik is raak)" width="100%"></p>
+<p align="center"><img src="docs/demo.nl.gif" alt="Dezelfde trillende hand zonder Tremors (links, de klik mist het vinkje) en met Tremors (rechts, de klik is raak)" width="100%"></p>
 <p align="center"><sub>Dezelfde trillende hand: links zoals Windows hem ziet, rechts door het filter van Tremors.</sub></p>
 
 Naarmate we ouder worden gaat de fijne motoriek achteruit, terwijl we de computer net
@@ -32,7 +34,7 @@ gratis voor iedereen die hetzelfde nodig heeft.
 - **Houdt de cursor stil.** Trillingen en plotselinge schokken worden weggefilterd; wie stilhoudt op een knop,
   houdt ook de cursor stil.
 - **Klikken blijven op hun doel.** Op het moment van klikken stopt de cursor met glijden.
-- **Negeert per ongeluk geklikt** (optioneel). Een klik telt pas als de knop even wordt
+- **Negeert per ongeluk klikken** (optioneel). Een klik telt pas als de knop even wordt
   vastgehouden; een trillend tikje wordt genegeerd. Slepen en dubbelklikken werken gewoon.
 - **Houdt het scrollwiel rustig.** Een trillend heen-en-weer wordt genegeerd, zodat een
   pagina niet op en neer springt.

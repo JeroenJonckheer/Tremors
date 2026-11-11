@@ -1,9 +1,12 @@
-"""Renders docs/demo.gif: the same trembling hand, without Tremors (left) and with
+"""Renders the demo GIFs: the same trembling hand, without Tremors (left) and with
 Tremors (right). The right-hand cursor comes from the real filter, via tools/DemoTrace.
 
 Usage:
     dotnet run --project tools/DemoTrace -- trace.csv
-    python tools/make_demo_gif.py trace.csv docs/demo.gif
+    python tools/make_demo_gif.py trace.csv docs            # all languages
+    python tools/make_demo_gif.py trace.csv docs nl         # one language
+
+Writes docs/demo.gif (English) and docs/demo.<language>.gif for the others.
 """
 import csv
 import sys
@@ -27,7 +30,18 @@ CORAL = (226, 96, 80)
 MINT = (60, 190, 140)
 WHITE = (255, 255, 255)
 
-CHECKBOXES = [(119, "Send me a copy"), (75, "Show notifications"), (163, "Large text")]
+# Window title, the three checkbox labels (top, target, bottom), panel titles, verdicts.
+TEXTS = {
+    "en": dict(window="Settings", boxes=("Show notifications", "Send me a copy", "Large text"),
+               without="Without Tremors", with_="With Tremors", hit="Clicked", miss="Missed the box"),
+    "nl": dict(window="Instellingen", boxes=("Meldingen tonen", "Stuur mij een kopie", "Grote tekst"),
+               without="Zonder Tremors", with_="Met Tremors", hit="Raak", miss="Vinkje gemist"),
+    "fr": dict(window="Paramètres", boxes=("Afficher les notifications", "M’envoyer une copie", "Texte agrandi"),
+               without="Sans Tremors", with_="Avec Tremors", hit="Cliqué", miss="Case manquée"),
+    "de": dict(window="Einstellungen", boxes=("Mitteilungen anzeigen", "Kopie an mich senden", "Große Schrift"),
+               without="Ohne Tremors", with_="Mit Tremors", hit="Geklickt", miss="Kästchen verfehlt"),
+}
+CHECKBOX_Y = (75, 119, 163)
 TARGET_Y = 118
 BOX_X, BOX = 240, 22
 
@@ -58,12 +72,12 @@ def at(rows, ms):
     return min(rows, key=lambda r: abs(r[0] - ms))
 
 
-def window(d, ox, oy, checked):
+def window(d, ox, oy, checked, text):
     d.rounded_rectangle([s(ox), s(oy), s(ox + PANEL_W), s(oy + PANEL_H)], radius=s(10), fill=WINDOW)
     d.rounded_rectangle([s(ox), s(oy), s(ox + PANEL_W), s(oy + 30)], radius=s(10), fill=TITLE_BAR)
     d.rectangle([s(ox), s(oy + 20), s(ox + PANEL_W), s(oy + 30)], fill=TITLE_BAR)
-    d.text((s(ox + 14), s(oy + 7)), "Settings", font=TITLE_FONT, fill=TEXT)
-    for y, label in CHECKBOXES:
+    d.text((s(ox + 14), s(oy + 7)), text["window"], font=TITLE_FONT, fill=TEXT)
+    for y, label in zip(CHECKBOX_Y, text["boxes"]):
         y0 = oy + y - BOX // 2 + (TARGET_Y - 119)
         x0 = ox + BOX_X
         is_target = y == 119
@@ -107,21 +121,21 @@ def on_target(x, y):
     return BOX_X <= x <= BOX_X + BOX and y0 <= y <= y0 + BOX
 
 
-def frame(rows, ms):
+def frame(rows, ms, text):
     width = SIDE * 2 + PANEL_W * 2 + GAP
     height = TOP + PANEL_H + BOTTOM
     im = Image.new("RGB", (s(width), s(height)), NAVY)
     d = ImageDraw.Draw(im)
     click = at(rows, CLICK_MS)
     panels = [
-        ("Without Tremors", CORAL, 1, 2, SIDE),
-        ("With Tremors", MINT, 3, 4, SIDE + PANEL_W + GAP),
+        (text["without"], CORAL, 1, 2, SIDE),
+        (text["with_"], MINT, 3, 4, SIDE + PANEL_W + GAP),
     ]
     for title, color, ix, iy, ox in panels:
         d.ellipse([s(ox + 2), s(22), s(ox + 14), s(34)], fill=color)
         d.text((s(ox + 22), s(16)), title, font=HEADER_FONT, fill=WHITE)
         hit = on_target(click[ix], click[iy])
-        window(d, ox, TOP, checked=ms >= CLICK_MS and hit)
+        window(d, ox, TOP, checked=ms >= CLICK_MS and hit, text=text)
         points = [(r[ix], r[iy]) for r in rows if ms - TRAIL_MS <= r[0] <= ms]
         trail(d, points, ox, TOP, color)
         if ms >= CLICK_MS:
@@ -129,17 +143,17 @@ def frame(rows, ms):
         now = at(rows, ms)
         pointer(d, now[ix], now[iy], ox, TOP)
         if ms >= CLICK_MS + 150:
-            verdict = "Clicked" if hit else "Missed the box"
+            verdict = text["hit"] if hit else text["miss"]
             d.rounded_rectangle([s(ox + 30), s(TOP + 236), s(ox + 30 + 14 + d.textlength(verdict, font=LABEL_FONT) / SCALE), s(TOP + 266)],
                                 radius=s(6), fill=color)
             d.text((s(ox + 37), s(TOP + 240)), verdict, font=LABEL_FONT, fill=WHITE)
     return im.resize((width, height), Image.LANCZOS)
 
 
-def main(trace, out):
-    rows = load(trace)
+def render(rows, language, out):
+    text = TEXTS[language]
     times = list(range(0, END_MS + 1, FRAME_MS))
-    frames = [frame(rows, ms) for ms in times]
+    frames = [frame(rows, ms, text) for ms in times]
     palette = frames[-1].quantize(colors=128, method=Image.Quantize.MEDIANCUT)
     frames = [f.quantize(palette=palette, dither=Image.Dither.NONE) for f in frames]
     durations = [FRAME_MS] * (len(frames) - 1) + [HOLD_LAST_MS]
@@ -147,5 +161,12 @@ def main(trace, out):
     print(out, len(frames), "frames")
 
 
+def main(trace, folder, languages):
+    rows = load(trace)
+    for language in languages:
+        name = "demo.gif" if language == "en" else f"demo.{language}.gif"
+        render(rows, language, f"{folder}/{name}")
+
+
 if __name__ == "__main__":
-    main(sys.argv[1], sys.argv[2])
+    main(sys.argv[1], sys.argv[2], sys.argv[3:] or list(TEXTS))

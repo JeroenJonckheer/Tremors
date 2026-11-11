@@ -34,11 +34,11 @@ See [docs/how-it-works.md](docs/how-it-works.md) for the design.
 
 ## Demo GIF
 
-`docs/demo.gif` is generated from the real filter:
+The demo GIFs (`docs/demo.gif` and one per language) are generated from the real filter:
 
 ```
 dotnet run --project tools/DemoTrace -- trace.csv
-python tools/make_demo_gif.py trace.csv docs/demo.gif
+python tools/make_demo_gif.py trace.csv docs   (all languages: demo.gif, demo.nl.gif, ...)
 ```
 
 The icon (`src/Tremors/Tremors.ico`, `docs/icon.png`) comes from `python tools/make_icon.py`.
