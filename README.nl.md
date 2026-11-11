@@ -42,7 +42,7 @@ gratis voor iedereen die hetzelfde nodig heeft.
 
 1. Download [**Tremors.exe**](https://github.com/JeroenJonckheer/Tremors/releases/latest).
 2. Zet het bestand op een vaste plek, bijvoorbeeld in `Documenten` of in `C:\Program Files\Tremors`.
-3. Dubbelklik erop. Naast de klok verschijnt een rond icoon met een groene stip, en de
+3. Dubbelklik erop. Naast de klok verschijnt een rond blauw icoon met een muisaanwijzer, en de
    muis wordt meteen stabiel gehouden.
 4. Klik op het icoon en vink **Starten met Windows** aan, zodat het altijd aanstaat.
 
@@ -60,8 +60,8 @@ Er hoeft niets geïnstalleerd te worden: geen beheerdersrechten en geen .NET nod
 | **Linksklik** op het icoon | Opent het instellingenvenster |
 | `Tremors.exe` nog eens starten | Opent ook het instellingenvenster |
 | **Rechtsklik** op het icoon | Menu: **Actief** (aan/uit), **Instellingen**, **Starten met Windows**, **Tremors stoppen** |
-| Groene stip | Tremors houdt de muis stabiel |
-| Grijze stip | Tremors staat op pauze |
+| Blauw icoon | Tremors houdt de muis stabiel |
+| Grijs icoon | Tremors staat op pauze |
 
 Het instellingenvenster:
 

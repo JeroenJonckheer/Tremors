@@ -18,7 +18,7 @@ mechanism and the filter, so that anyone can check, tune or improve it.
 | [`PointerAcceleration.cs`](../src/Tremors/PointerAcceleration.cs) | Switches Windows mouse acceleration off while filtering |
 | [`AutoStart.cs`](../src/Tremors/AutoStart.cs) | Start with Windows (per-user Run key) |
 | [`Text.cs`](../src/Tremors/Text.cs) | All user-facing text: English, Dutch, French, German; switchable at runtime |
-| [`TrayIcon.cs`](../src/Tremors/TrayIcon.cs) | Draws the tray icon in code (green = on, grey = paused) |
+| [`TrayIcon.cs`](../src/Tremors/TrayIcon.cs) | Draws the icon in code: a steady pointer with the absorbed tremor behind it (navy = on, grey = paused); [`tools/make_icon.py`](../tools/make_icon.py) renders the same design to `Tremors.ico` |
 
 ## Intercepting the mouse
 

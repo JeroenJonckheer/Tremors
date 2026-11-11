@@ -46,7 +46,7 @@ everyone who needs the same.
 
 1. Download [**Tremors.exe**](https://github.com/JeroenJonckheer/Tremors/releases/latest).
 2. Put it somewhere permanent, for example in `Documents` or `C:\Program Files\Tremors`.
-3. Double-click it. A round icon with a green dot appears next to the clock, and the
+3. Double-click it. A round blue icon with a mouse pointer appears next to the clock, and the
    mouse is steadied right away.
 4. Click the icon and tick **Start with Windows**, so it is always on.
 
@@ -64,8 +64,8 @@ No installation, no administrator rights and no .NET download are needed.
 | **Left-click** the icon | Opens the settings window |
 | Start `Tremors.exe` again | Also opens the settings window |
 | **Right-click** the icon | Menu: **Active** (on/off), **Settings**, **Start with Windows**, **Quit** |
-| Green dot | Tremors is steadying the mouse |
-| Grey dot | Tremors is paused |
+| Blue icon | Tremors is steadying the mouse |
+| Grey icon | Tremors is paused |
 
 The settings window:
 

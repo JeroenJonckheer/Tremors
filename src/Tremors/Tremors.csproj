@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
     <Product>Tremors</Product>
     <Authors>Jeroen Jonckheer</Authors>
     <Description>Steady mouse for people with a tremor. Free and open source.</Description>

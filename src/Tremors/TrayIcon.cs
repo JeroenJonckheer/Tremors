@@ -4,28 +4,38 @@ using System.Runtime.InteropServices;
 namespace Tremors;
 
 /// <summary>
-/// Draws the tray icon in code, so no .ico file is needed: a crosshair with a
-/// dot in the middle. Green when Tremors is active, grey when it is paused.
+/// Draws the Tremors icon in code: a steady mouse pointer with two faint, offset copies
+/// behind it, the tremor that is being absorbed. Navy and mint when active, grey when
+/// paused. The same design is in Tremors.ico and docs/icon.png (tools/make_icon.py).
 /// </summary>
 internal static class TrayIcon
 {
+    // Classic pointer, tip at (0, 0), height 1.
+    private static readonly PointF[] Arrow =
+        [new(0, 0), new(0, 0.895f), new(0.211f, 0.684f), new(0.368f, 1f), new(0.474f, 0.947f), new(0.316f, 0.632f), new(0.632f, 0.632f)];
+
+    private const float Height = 0.56f;   // pointer height, fraction of the icon
+    private const float Rounding = 0.018f; // softens the pointer's corners
+
+    private static readonly (float X, float Y, int Alpha)[] Ghosts = [(-0.07f, 0.025f, 80), (0.055f, -0.045f, 130)];
+
+    private static readonly Color Navy = Color.FromArgb(28, 52, 78);
+    private static readonly Color Grey = Color.FromArgb(120, 128, 138);
+    private static readonly Color White = Color.FromArgb(240, 246, 248);
+    private static readonly Color Mint = Color.FromArgb(110, 222, 172);
+    private static readonly Color Pale = Color.FromArgb(210, 216, 222);
+
+    /// <summary>Creates the icon at the size Windows uses for the notification area.</summary>
     public static Icon Create(bool active)
     {
-        using var bmp = new Bitmap(32, 32);
+        int size = Math.Max(16, SystemInformation.SmallIconSize.Width);
+        using var large = Draw(active, size * 4); // draw large, scale down for smooth edges
+        using var bmp = new Bitmap(size, size);
         using (var g = Graphics.FromImage(bmp))
         {
-            g.SmoothingMode = SmoothingMode.AntiAlias;
-            g.Clear(Color.Transparent);
-
-            using var background = new SolidBrush(Color.FromArgb(24, 30, 40));
-            g.FillEllipse(background, 1, 1, 30, 30);
-
-            using var cross = new Pen(Color.FromArgb(224, 248, 255), 2.5f);
-            g.DrawLine(cross, 16, 5, 16, 27);
-            g.DrawLine(cross, 5, 16, 27, 16);
-
-            using var dot = new SolidBrush(active ? Color.FromArgb(0, 200, 120) : Color.FromArgb(130, 136, 145));
-            g.FillEllipse(dot, 10, 10, 12, 12);
+            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            g.DrawImage(large, 0, 0, size, size);
         }
 
         IntPtr handle = bmp.GetHicon();
@@ -38,6 +48,36 @@ internal static class TrayIcon
         {
             DestroyIcon(handle);
         }
+    }
+
+    private static Bitmap Draw(bool active, int size)
+    {
+        var bmp = new Bitmap(size, size);
+        using var g = Graphics.FromImage(bmp);
+        g.SmoothingMode = SmoothingMode.AntiAlias;
+        g.Clear(Color.Transparent);
+
+        float margin = size * 0.02f;
+        using (var background = new SolidBrush(active ? Navy : Grey))
+            g.FillEllipse(background, margin, margin, size - 2 * margin, size - 2 * margin);
+
+        float h = size * Height;
+        var tip = new PointF(size / 2f - 0.632f * h / 2, size / 2f - h / 2); // centre the pointer
+        foreach (var (x, y, alpha) in Ghosts)
+            Pointer(g, new PointF(tip.X + x * size, tip.Y + y * size), h, Color.FromArgb(alpha, active ? Mint : Pale), size);
+        Pointer(g, tip, h, White, size);
+        return bmp;
+    }
+
+    private static void Pointer(Graphics g, PointF tip, float height, Color color, int size)
+    {
+        var points = Array.ConvertAll(Arrow, p => new PointF(tip.X + p.X * height, tip.Y + p.Y * height));
+        using var path = new GraphicsPath();
+        path.AddPolygon(points);
+        using var brush = new SolidBrush(color);
+        using var pen = new Pen(color, size * Rounding) { LineJoin = LineJoin.Round };
+        g.FillPath(brush, path);
+        g.DrawPath(pen, path);
     }
 
     [DllImport("user32.dll")]
