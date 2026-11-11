@@ -10,12 +10,14 @@ First release.
 
 ### Added
 
-- Tremor filter for the mouse cursor: adaptive low-pass with a short leash.
+- Tremor filter for the mouse cursor: two-stage low-pass that adapts to sustained
+  movement, so trembling and sudden jerks are absorbed and deliberate moves stay direct.
+- Leash: the cursor stays still while holding still on a target.
 - Click lock: the cursor stops gliding when a button is pressed.
 - Scroll wheel filter that ignores trembling flicks back and forth.
 - Tray icon with menu, settings window with a single strength slider.
 - Start with Windows, without administrator rights.
-- English and Dutch interface.
+- Interface in English, Dutch, French and German, following the Windows display language.
 - Single-file `Tremors.exe`, no installation or .NET runtime needed.
 
 [1.0.0]: https://github.com/JeroenJonckheer/Tremors/releases/tag/v1.0.0

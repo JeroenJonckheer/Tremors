@@ -14,7 +14,7 @@ mechanism and the filter, so that anyone can check, tune or improve it.
 | [`SettingsForm.cs`](../src/Tremors/SettingsForm.cs) | The settings window |
 | [`Settings.cs`](../src/Tremors/Settings.cs), [`Store.cs`](../src/Tremors/Store.cs) | The settings and their JSON file |
 | [`AutoStart.cs`](../src/Tremors/AutoStart.cs) | Start with Windows (per-user Run key) |
-| [`Text.cs`](../src/Tremors/Text.cs) | All user-facing text, English and Dutch |
+| [`Text.cs`](../src/Tremors/Text.cs) | All user-facing text: English, Dutch, French, German |
 | [`TrayIcon.cs`](../src/Tremors/TrayIcon.cs) | Draws the tray icon in code (green = on, grey = paused) |
 
 ## Intercepting the mouse
@@ -37,48 +37,64 @@ pass through untouched.
 
 ## The filter
 
-The filter keeps three positions:
+The filter keeps these positions:
 
 ```
 raw     where the hand is: the sum of all swallowed movement
-smooth  a filtered version of raw
+mid     first filter stage
+smooth  second filter stage
 cursor  what is on screen
 ```
 
-### 1. Adaptive low-pass
+### 1. Intent
 
-On every event, and on a 10 ms timer while the cursor is still catching up, `smooth`
-moves towards `raw`:
+A tremor, even a sudden jerk of several centimetres, goes back and forth or stops
+after a fraction of a second. A deliberate movement keeps going in one direction. So
+Tremors does not look at how *far* the hand moved, but at how *fast it keeps moving*:
+the hand velocity averaged over 250 ms.
 
 ```
-gap    = |raw - smooth|
-tau    = T / (1 + gap / 40 px)
+velocity = average of (raw movement / time) over 250 ms
+intent   = max(0, |velocity| - 0.5 px/ms) / 0.2 px/ms
+```
+
+Below 0.5 px/ms (about 13 cm per second on a typical screen, averaged) movement counts
+as tremor and gets the full filter. A jerk that goes out and comes back averages out to
+almost nothing. Only a sustained movement builds up intent.
+
+### 2. Adaptive two-stage low-pass
+
+On every event, and on a 10 ms timer while the cursor is still catching up, the two
+stages move towards `raw`:
+
+```
+tau    = T / (1 + intent) / 2
 a      = 1 - exp(-dt / tau)
-smooth = smooth + a * (raw - smooth)
+mid    = mid    + a * (raw - mid)
+smooth = smooth + a * (mid - smooth)
 ```
 
-`T` is the time constant: up to 250 ms at strength 100 (`T = 250 ms * k^1.5`, with
+`T` is the time constant: up to 500 ms at strength 100 (`T = 500 ms * k^1.5`, with
 `k = strength / 100`). Because the filter works in time, not per event, it behaves the
 same on a 125 Hz office mouse and a 1000 Hz gaming mouse.
 
-The time constant shrinks as the gap grows. A tremor makes small, fast movements around
-a point: the gap stays small, `tau` stays long and the trembling is averaged away. A
-deliberate movement makes the gap grow quickly, `tau` drops and the cursor catches up.
-That is what keeps Tremors from feeling sluggish at high strength.
+Two stages in series damp a sudden jerk much more than a single stage with the same
+delay. With intent, `tau` drops and the cursor catches up quickly. That keeps
+Tremors from feeling sluggish while still absorbing jerks.
 
-### 2. Leash
+### 3. Leash
 
 The cursor is tied to `smooth` with a short leash of up to 4 px (`4 px * k`). While
 `smooth` stays within the leash, the cursor does not move at all. Once it moves further,
 the cursor follows it at leash distance. This removes the last pixel of wobble when
 holding still on a small target.
 
-### 3. Click
+### 4. Click
 
-On a button press the remaining glide is dropped (`raw` and `smooth` jump to the cursor),
+On a button press the remaining glide is dropped (`raw`, `mid`, `smooth` and the velocity jump to the cursor),
 so the cursor does not drift while clicking or double-clicking.
 
-### 4. Scroll wheel
+### 5. Scroll wheel
 
 A tremor often turns the wheel one notch forward and immediately back. Tremors drops a
 notch in the opposite direction when it comes within `400 ms * k` of the previous notch.
@@ -95,23 +111,28 @@ A real change of direction after that pause passes normally.
 ## Measured effect
 
 The tests in [`tests/Tremors.Tests`](../tests/Tremors.Tests/SmootherTests.cs) simulate a
-5 Hz essential tremor of ±8 px on a 125 Hz mouse while the user tries to hold still.
-How far the cursor still wanders:
+125 Hz mouse. Two situations while the user tries to hold still:
 
-| Strength | Cursor movement |
-|---|---|
-| off | 16 px |
-| 30 | 10 px |
-| 50 | 4 px |
-| 70 (default) | 0 px |
-| 100 | 0 px |
+- **Tremor:** a continuous 5 Hz essential tremor of ±8 px (16 px wide).
+- **Jerk:** a sudden jerk of 150 px (about 4 cm) out in 64 ms and back in 96 ms.
 
-The same tests check that a deliberate 600 px movement still ends on target, also with
-tremor on top, that clicks stop the glide and that the wheel filter lets real reversals
-through.
+And one deliberate movement of 600 px in 0.3 s, measuring how long the cursor needs
+after the hand stops.
+
+| Strength | Tremor left | Jerk left | Deliberate move settles in |
+|---|---|---|---|
+| off | 16 px | 150 px | 0 s |
+| 30 | 4 px | 80 px | 0.02 s |
+| 50 | 0 px | 45 px | 0.07 s |
+| 70 (default) | 0 px | 27 px | 0.24 s |
+| 85 | 0 px | 19 px | 0.6 s |
+| 100 | 0 px | 14 px | 1.1 s |
+
+The tests also check that deliberate movements end on target, also with tremor on
+top, that clicks stop the glide and that the wheel filter lets real reversals through.
 
 ## Tuning
 
-The constants are at the top of [`Smoother.cs`](../src/Tremors/Smoother.cs). If you
+The constants are in `Smoother.Tuning` at the top of [`Smoother.cs`](../src/Tremors/Smoother.cs); tests can pass their own. If you
 change them, run `dotnet test` and, more importantly, try it with someone who has a
 tremor. Feedback from real use is the most valuable contribution there is.

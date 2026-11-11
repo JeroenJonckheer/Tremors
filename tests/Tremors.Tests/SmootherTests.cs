@@ -86,6 +86,31 @@ public class SmootherTests
         Assert.True(Spread(cursor) <= 4, $"cursor wandered {Spread(cursor)} px against 16 px of tremor");
     }
 
+    /// <summary>A sudden jerk of about 4 cm (150 px) out in 64 ms and back in 96 ms.</summary>
+    private static (double, double) Jerk(double t) =>
+        (t <= 0.064 ? 150 * t / 0.064 : Math.Max(0, 150 - 150 * (t - 0.064) / 0.096), 0);
+
+    [Fact]
+    public void Sudden_jerk_is_mostly_absorbed()
+    {
+        var rig = new Rig(intensity: 70);
+
+        var cursor = Follow(rig, Jerk, 600);
+
+        int reach = cursor.Max(p => p.X) - 960;
+        Assert.True(reach <= 30, $"a 150 px jerk moved the cursor {reach} px");
+    }
+
+    [Fact]
+    public void Full_strength_absorbs_nearly_all_of_a_jerk()
+    {
+        var strong = new Rig(intensity: 100);
+
+        int reach = Follow(strong, Jerk, 600).Max(p => p.X) - 960;
+
+        Assert.True(reach <= 15, $"a 150 px jerk moved the cursor {reach} px at full strength");
+    }
+
     [Fact]
     public void Stronger_setting_damps_more()
     {

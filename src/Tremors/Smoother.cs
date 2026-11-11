@@ -2,13 +2,17 @@ namespace Tremors;
 
 /// <summary>
 /// Tremor filter. Raw mouse movement is swallowed and replaced by a smoothed
-/// cursor position, computed in three steps:
+/// cursor position, computed in four steps:
 /// <list type="number">
 ///   <item><b>Raw position.</b> Every swallowed event adds its movement to a
 ///   virtual "raw" cursor that follows the hand exactly.</item>
-///   <item><b>Adaptive low-pass.</b> A time-based exponential filter pulls the
-///   smoothed position towards the raw one. Its time constant shrinks as the gap
-///   grows: small trembling is damped hard, large intentional moves catch up fast.</item>
+///   <item><b>Intent.</b> The velocity of the hand, averaged over about a tenth of a
+///   second. Trembling and short jerks go back and forth and average out; a deliberate
+///   movement keeps going in one direction and builds up speed.</item>
+///   <item><b>Adaptive low-pass.</b> Two exponential filters in series pull the
+///   smoothed position towards the raw one. Two stages damp sudden jerks far more than
+///   one. The more intent, the shorter the time constant, so deliberate movement still
+///   feels direct.</item>
 ///   <item><b>Leash.</b> The visible cursor only moves once the smoothed position is
 ///   more than a few pixels away, and then trails it at that distance. Jitter
 ///   while holding still on a target never reaches the screen.</item>
@@ -19,12 +23,24 @@ namespace Tremors;
 /// <remarks>Not thread-safe; call from the UI thread only (the hook runs there too).</remarks>
 internal sealed class Smoother
 {
-    private const double MaxTimeConstantMs = 250; // smoothing at intensity 100
-    private const double MaxLeashPx = 4;          // leash radius at intensity 100
-    private const double MaxWheelGuardMs = 400;   // wheel debounce at intensity 100
-    private const double CatchUpPx = 40;          // gap at which smoothing halves
-    private const double MaxStepMs = 50;          // cap for long pauses between updates
+    /// <summary>Filter constants. The values at intensity 100 scale down with the slider.</summary>
+    /// <param name="MaxTimeConstantMs">Smoothing of a hand that is not going anywhere.</param>
+    /// <param name="IntentThreshold">Average hand speed (px/ms) below which movement counts as tremor.</param>
+    /// <param name="IntentSpeed">Speed above the threshold (px/ms) at which smoothing halves.</param>
+    /// <param name="IntentWindowMs">Time over which hand speed is averaged.</param>
+    /// <param name="MaxLeashPx">Leash radius.</param>
+    /// <param name="MaxWheelGuardMs">Wheel debounce.</param>
+    internal sealed record Tuning(
+        double MaxTimeConstantMs = 500,
+        double IntentThreshold = 0.5,
+        double IntentSpeed = 0.2,
+        double IntentWindowMs = 250,
+        double MaxLeashPx = 4,
+        double MaxWheelGuardMs = 400);
 
+    private const double MaxStepMs = 50; // cap for long pauses between updates
+
+    private readonly Tuning _tuning;
     private double _timeConstant;
     private double _leash;
     private double _wheelGuard;
@@ -32,6 +48,9 @@ internal sealed class Smoother
 
     private bool _synced;
     private double _rawX, _rawY;     // where the hand is
+    private double _prevX, _prevY;   // raw position at the previous step
+    private double _velX, _velY;     // averaged hand velocity, px/ms
+    private double _midX, _midY;     // first filter stage
     private double _fltX, _fltY;     // smoothed position
     private int _curX, _curY;        // where we last put the cursor
     private long _lastStep;
@@ -47,25 +66,29 @@ internal sealed class Smoother
 
     /// <param name="moveCursor">Moves the cursor and returns where it actually landed.</param>
     /// <param name="screen">Bounds of the whole desktop, all monitors together.</param>
-    public Smoother(Func<int, int, Mouse.POINT> moveCursor, Func<Rectangle> screen)
+    /// <param name="tuning">Filter constants; defaults when omitted.</param>
+    public Smoother(Func<int, int, Mouse.POINT> moveCursor, Func<Rectangle> screen, Tuning? tuning = null)
     {
         _moveCursor = moveCursor;
         _screen = screen;
+        _tuning = tuning ?? new Tuning();
     }
 
     /// <summary>False at intensity 0: movement then passes through untouched.</summary>
     public bool Active => _timeConstant > 0;
 
     /// <summary>True while the cursor is still gliding towards the hand.</summary>
-    public bool Settling => _synced && (Math.Abs(_rawX - _fltX) > 0.5 || Math.Abs(_rawY - _fltY) > 0.5);
+    public bool Settling => _synced &&
+        (Math.Abs(_rawX - _fltX) > 0.5 || Math.Abs(_rawY - _fltY) > 0.5 ||
+         Math.Abs(_rawX - _midX) > 0.5 || Math.Abs(_rawY - _midY) > 0.5);
 
     /// <summary>Maps the 0..100 slider to filter strength.</summary>
     public void Configure(int intensity)
     {
         double k = Math.Clamp(intensity, 0, 100) / 100.0;
-        _timeConstant = MaxTimeConstantMs * Math.Pow(k, 1.5);
-        _leash = MaxLeashPx * k;
-        _wheelGuard = MaxWheelGuardMs * k;
+        _timeConstant = _tuning.MaxTimeConstantMs * Math.Pow(k, 1.5);
+        _leash = _tuning.MaxLeashPx * k;
+        _wheelGuard = _tuning.MaxWheelGuardMs * k;
     }
 
     public void SetWheel(bool enabled)
@@ -98,16 +121,28 @@ internal sealed class Smoother
     {
         if (!_synced) return;
 
-        double dt = Math.Min(now - _lastStep, MaxStepMs);
+        double elapsed = now - _lastStep;
+        if (elapsed <= 0) return;
         _lastStep = now;
-        if (dt <= 0) return;
+        double dt = Math.Min(elapsed, MaxStepMs);
 
-        double gapX = _rawX - _fltX, gapY = _rawY - _fltY;
-        double gap = Math.Sqrt(gapX * gapX + gapY * gapY);
-        double tau = _timeConstant / (1 + gap / CatchUpPx);
+        // Intent: hand velocity averaged over the intent window. Uses the real elapsed
+        // time, so the speed of an earlier movement does not linger after a pause.
+        double v = 1 - Math.Exp(-elapsed / _tuning.IntentWindowMs);
+        _velX += v * ((_rawX - _prevX) / elapsed - _velX);
+        _velY += v * ((_rawY - _prevY) / elapsed - _velY);
+        _prevX = _rawX;
+        _prevY = _rawY;
+        double speed = Math.Sqrt(_velX * _velX + _velY * _velY);
+        double intent = Math.Max(0, speed - _tuning.IntentThreshold) / _tuning.IntentSpeed;
+
+        // Two-stage low-pass; each stage gets half the time constant.
+        double tau = _timeConstant / (1 + intent) / 2;
         double a = 1 - Math.Exp(-dt / tau);
-        _fltX += a * gapX;
-        _fltY += a * gapY;
+        _midX += a * (_rawX - _midX);
+        _midY += a * (_rawY - _midY);
+        _fltX += a * (_midX - _fltX);
+        _fltY += a * (_midY - _fltY);
 
         // Leash: keep the cursor within _leash pixels of the smoothed position.
         double dx = _fltX - _curX, dy = _fltY - _curY;
@@ -126,8 +161,9 @@ internal sealed class Smoother
     /// <summary>On a click the cursor stays put: drop the remaining glide.</summary>
     public void Click()
     {
-        _rawX = _fltX = _curX;
-        _rawY = _fltY = _curY;
+        _rawX = _prevX = _midX = _fltX = _curX;
+        _rawY = _prevY = _midY = _fltY = _curY;
+        _velX = _velY = 0;
     }
 
     /// <summary>Returns false when a wheel notch looks like a tremor.</summary>
@@ -146,8 +182,9 @@ internal sealed class Smoother
 
     private void SyncTo(Mouse.POINT p, long now)
     {
-        _rawX = _fltX = _curX = p.X;
-        _rawY = _fltY = _curY = p.Y;
+        _rawX = _prevX = _midX = _fltX = _curX = p.X;
+        _rawY = _prevY = _midY = _fltY = _curY = p.Y;
+        _velX = _velY = 0;
         _lastStep = now;
         _synced = true;
     }

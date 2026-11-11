@@ -26,12 +26,13 @@ gratis voor iedereen die hetzelfde nodig heeft.
 
 ## Wat het doet
 
-- **Houdt de cursor stil.** Trillingen worden weggefilterd; wie stilhoudt op een knop,
+- **Houdt de cursor stil.** Trillingen en plotselinge schokken worden weggefilterd; wie stilhoudt op een knop,
   houdt ook de cursor stil.
 - **Klikken blijven op hun doel.** Op het moment van klikken stopt de cursor met glijden.
 - **Houdt het scrollwiel rustig.** Een trillend heen-en-weer wordt genegeerd, zodat een
   pagina niet op en neer springt.
 - **Eén schuifje.** Kies hoe sterk het filter is, van 0 (uit) tot 100.
+- **Spreekt uw taal.** Nederlands, Engels, Frans of Duits, net als Windows.
 - **Verder niets.** Geen account, geen internet, geen reclame, geen gegevens verzamelen.
 
 ## Installeren

@@ -7,7 +7,7 @@ setting helped.
 ## Reporting a problem or an idea
 
 Open an [issue](https://github.com/JeroenJonckheer/Tremors/issues/new/choose). Plain
-language is fine, in English or Dutch. Mention the strength setting and the type of
+language is fine, in English, Dutch, French or German. Mention the strength setting and the type of
 mouse if you can.
 
 ## Changing the code

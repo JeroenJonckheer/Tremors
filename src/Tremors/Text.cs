@@ -3,12 +3,13 @@ using System.Globalization;
 namespace Tremors;
 
 /// <summary>
-/// All user-facing text. Dutch on a Dutch Windows, English everywhere else.
+/// All user-facing text, in the display language of Windows: English, Dutch, French
+/// or German. Any other language falls back to English.
 /// To add a language: add a field to <see cref="Language"/> and a case in <see cref="Pick"/>.
 /// </summary>
 internal static class Text
 {
-    private sealed record Language(
+    internal sealed record Language(
         string Active,
         string Settings,
         string StartWithWindows,
@@ -56,11 +57,45 @@ internal static class Text
         SteadyWheel: "Scrollwiel stabiel houden",
         Done: "Klaar");
 
+    private static readonly Language French = new(
+        Active: "Activé",
+        Settings: "Paramètres…",
+        StartWithWindows: "Démarrer avec Windows",
+        Quit: "Quitter Tremors",
+        WelcomeTitle: "Tremors est activé",
+        WelcomeBody: "La souris est maintenant stabilisée. Cliquez sur cette icône pour modifier les paramètres.",
+        HookFailed: "Impossible de suivre la souris : ",
+        TooltipOn: "Tremors : activé (intensité {0})",
+        TooltipOff: "Tremors : désactivé",
+        IsOn: "Tremors est activé",
+        Strength: "Intensité : {0}",
+        StrengthHint: "0 = désactivé. Plus élevé = plus stable, mais la souris réagit un peu plus lentement.",
+        SteadyWheel: "Stabiliser la molette",
+        Done: "Terminé");
+
+    private static readonly Language German = new(
+        Active: "Aktiv",
+        Settings: "Einstellungen…",
+        StartWithWindows: "Mit Windows starten",
+        Quit: "Tremors beenden",
+        WelcomeTitle: "Tremors ist aktiv",
+        WelcomeBody: "Die Maus wird jetzt ruhig gehalten. Klicken Sie auf dieses Symbol, um die Einstellungen zu ändern.",
+        HookFailed: "Die Maus kann nicht verfolgt werden: ",
+        TooltipOn: "Tremors: an (Stärke {0})",
+        TooltipOff: "Tremors: aus",
+        IsOn: "Tremors ist aktiv",
+        Strength: "Stärke: {0}",
+        StrengthHint: "0 = aus. Höher = ruhiger, aber die Maus reagiert etwas langsamer.",
+        SteadyWheel: "Mausrad stabilisieren",
+        Done: "Fertig");
+
     private static readonly Language Current = Pick(CultureInfo.CurrentUICulture);
 
-    private static Language Pick(CultureInfo culture) => culture.TwoLetterISOLanguageName switch
+    internal static Language Pick(CultureInfo culture) => culture.TwoLetterISOLanguageName switch
     {
         "nl" => Dutch,
+        "fr" => French,
+        "de" => German,
         _ => English,
     };
 

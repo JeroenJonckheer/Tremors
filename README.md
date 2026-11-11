@@ -30,12 +30,13 @@ everyone who needs the same.
 
 ## What it does
 
-- **Steadies the cursor.** Trembling is smoothed away; holding still on a button
+- **Steadies the cursor.** Trembling and sudden jerks are smoothed away; holding still on a button
   keeps the cursor still.
 - **Keeps clicks on target.** At the moment you click, the cursor stops gliding.
 - **Steadies the scroll wheel.** A trembling flick back and forth is ignored, so a
   page does not jump up and down.
 - **One slider.** Choose how strong the filter is, from 0 (off) to 100.
+- **Speaks your language.** English, Dutch, French or German, following Windows.
 - **Nothing else.** No account, no internet, no ads, no data collection.
 
 ## Install
