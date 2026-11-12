@@ -92,7 +92,7 @@ internal static class Text
         Done: "Klaar",
         About: "Over Tremors",
         MadeBy: "Gemaakt door {0}",
-        Free: "Tremors is gratis, en dat blijft altijd zo.",
+        Free: "Tremors is gratis en dat blijft altijd zo.",
         Latest: "Nieuwste versie ophalen");
 
     private static readonly Language French = new(

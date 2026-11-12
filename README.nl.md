@@ -38,7 +38,7 @@ gratis voor iedereen die hetzelfde nodig heeft.
   vastgehouden; een trillend tikje wordt genegeerd. Slepen en dubbelklikken werken gewoon.
 - **Houdt het scrollwiel rustig.** Een trillend heen-en-weer wordt genegeerd, zodat een
   pagina niet op en neer springt.
-- **Eenvoudig in te stellen.** Eén schuifje voor de sterkte, en twee om fijn af te stemmen.
+- **Eenvoudig in te stellen.** Eén schuifje voor de sterkte en twee om fijn af te stemmen.
 - **Spreekt uw taal.** Nederlands, Engels, Frans of Duits. Volgt Windows, of kies een
   vlag in het instellingenvenster.
 - **Verder niets.** Geen account, geen internet, geen reclame, geen gegevens verzamelen.
@@ -47,7 +47,7 @@ gratis voor iedereen die hetzelfde nodig heeft.
 
 1. Download [**Tremors.exe**](https://github.com/JeroenJonckheer/Tremors/releases/latest).
 2. Zet het bestand op een vaste plek, bijvoorbeeld in `Documenten` of in `C:\Program Files\Tremors`.
-3. Dubbelklik erop. Naast de klok verschijnt een rond blauw icoon met een muisaanwijzer, en de
+3. Dubbelklik erop. Naast de klok verschijnt een rond blauw icoon met een muisaanwijzer en de
    muis wordt meteen stabiel gehouden.
 4. Klik op het icoon en vink **Starten met Windows** aan, zodat het altijd aanstaat.
 
@@ -56,7 +56,7 @@ Er hoeft niets geïnstalleerd te worden: geen beheerdersrechten en geen .NET nod
 > **Windows kan de eerste keer waarschuwen** ("Windows heeft uw pc beveiligd").
 > Tremors is niet ondertekend met een betaald certificaat. Klik op **Meer informatie** →
 > **Toch uitvoeren**. De download is te controleren met het bestand `Tremors.exe.sha256`
-> op de releasepagina, en de [broncode](src/Tremors) staat hier helemaal open.
+> op de releasepagina en de [broncode](src/Tremors) staat hier helemaal open.
 
 ## Gebruik
 
@@ -87,12 +87,12 @@ aanwijzerprecisie"), want die maakt snelle, trillende bewegingen groter. Uw eige
 instelling komt terug zodra Tremors gepauzeerd of afgesloten wordt.
 
 **De juiste instellingen vinden:** begin met sterkte 70. Komen schokken nog door? Zet
-eerst de muissnelheid lager, dan de stilstandzone hoger, en dan pas de sterkte. Kies de
+eerst de muissnelheid lager, dan de stilstandzone hoger en dan pas de sterkte. Kies de
 laagste waarden waarbij de cursor rustig blijft; dan reageert de muis zo direct mogelijk.
 
 ### Tips voor mantelzorgers en familie
 
-- Stel het één keer in, vink **Starten met Windows** aan, en wie de computer gebruikt
+- Stel het één keer in, vink **Starten met Windows** aan en wie de computer gebruikt
   hoeft er nooit meer aan te denken.
 - Een zware muis of een trackball helpt ook; Tremors werkt met allebei.
 - Grotere tekst (Instellingen → Toegankelijkheid → Tekengrootte) en een grotere
@@ -101,7 +101,7 @@ laagste waarden waarbij de cursor rustig blijft; dan reageert de muis zo direct 
 
 ## Privacy
 
-Tremors leest muisbewegingen om ze te filteren, en verder niets. Het leest het
+Tremors leest muisbewegingen om ze te filteren en verder niets. Het leest het
 toetsenbord niet, het bewaart of verstuurt niets en maakt nooit verbinding met internet.
 Het enige bestand dat het schrijft zijn de instellingen: `%AppData%\Tremors\settings.json`.
 
