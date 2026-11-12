@@ -99,6 +99,9 @@ laagste waarden waarbij de cursor rustig blijft; dan reageert de muis zo direct 
 - Grotere tekst (Instellingen → Toegankelijkheid → Tekengrootte) en een grotere
   muisaanwijzer (Instellingen → Toegankelijkheid → Muisaanwijzer) maken knoppen
   makkelijker te raken.
+- **Ook voor de telefoon:** iPhones en Android-telefoons hebben zelf instellingen voor een
+  trillende hand, alleen goed verstopt. De [handleiding voor de telefoon (pdf)](docs/phone-guide.nl.pdf)
+  laat op twee pagina's zien wat u aanzet, om te printen of mee te sturen.
 
 ## Privacy
 
