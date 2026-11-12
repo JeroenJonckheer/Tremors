@@ -4,12 +4,16 @@ All notable changes to Tremors are listed here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the
 project uses [semantic versioning](https://semver.org/).
 
-## [Unreleased]
+## [1.2.0] - 2026-11-12
 
 ### Added
 
 - "About Tremors" link in the settings window: version, build month, maker, and a link to
   the latest version.
+
+### Changed
+
+- Clearer wording in the README and project description ("a calm mouse for shaky hands").
 
 ## [1.1.1] - 2026-11-11
 
@@ -51,6 +55,7 @@ First release.
 - Interface in English, Dutch, French and German, following the Windows display language.
 - Single-file `Tremors.exe`, no installation or .NET runtime needed.
 
+[1.2.0]: https://github.com/JeroenJonckheer/Tremors/releases/tag/v1.2.0
 [1.1.1]: https://github.com/JeroenJonckheer/Tremors/releases/tag/v1.1.1
 [1.1.0]: https://github.com/JeroenJonckheer/Tremors/releases/tag/v1.1.0
 [1.0.0]: https://github.com/JeroenJonckheer/Tremors/releases/tag/v1.0.0
