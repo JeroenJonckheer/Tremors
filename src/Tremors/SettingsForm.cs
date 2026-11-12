@@ -17,6 +17,10 @@ internal sealed class SettingsForm : Form
     private readonly CheckBox _wheel = NewCheckBox();
     private readonly CheckBox _autoStart = NewCheckBox();
     private readonly Button _done = new() { AutoSize = true, Anchor = AnchorStyles.Right, Margin = new Padding(0, 16, 0, 0) };
+    private readonly LinkLabel _about = new()
+    {
+        AutoSize = true, Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Margin = new Padding(0, 16, 0, 4),
+    };
     private readonly List<(string Code, Button Button)> _flags = [];
     private bool _refreshing;
 
@@ -42,6 +46,12 @@ internal sealed class SettingsForm : Form
         _clickHold = new Slider(0, Settings.MaxClickHold, 10, width);
 
         _done.Click += (_, _) => Close();
+        _about.Font = new Font(Font.FontFamily, 10f);
+        _about.LinkClicked += (_, _) =>
+        {
+            using var about = new AboutForm(Font);
+            about.ShowDialog(this);
+        };
         AcceptButton = _done;
         CancelButton = _done;
 
@@ -61,6 +71,7 @@ internal sealed class SettingsForm : Form
         grid.Controls.Add(_clickHold, 1, 2);
         grid.Controls.Add(_wheel, 0, 3);
         grid.Controls.Add(_autoStart, 1, 3);
+        grid.Controls.Add(_about, 0, 4);
         grid.Controls.Add(_done, 1, 4);
         Controls.Add(grid);
 
@@ -77,6 +88,7 @@ internal sealed class SettingsForm : Form
         {
             _app.Changed -= RefreshFromSettings;
             Icon?.Dispose();
+            _about.Font.Dispose();
         };
         RefreshFromSettings();
     }
@@ -129,6 +141,7 @@ internal sealed class SettingsForm : Form
         _autoStart.Text = Tremors.Text.StartWithWindows;
         _autoStart.Checked = s.AutoStart;
         _done.Text = Tremors.Text.Done;
+        _about.Text = Tremors.Text.About;
         foreach (var (code, button) in _flags)
             button.FlatAppearance.BorderSize = code == Tremors.Text.CurrentCode ? LogicalToDeviceUnits(2) : 0;
 

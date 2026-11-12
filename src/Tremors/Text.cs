@@ -33,7 +33,11 @@ internal static class Text
         string ClickHold,
         string ClickHoldHint,
         string SteadyWheel,
-        string Done);
+        string Done,
+        string About,
+        string MadeBy,
+        string Free,
+        string Latest);
 
     private static readonly Language English = new(
         Code: "en",
@@ -57,7 +61,11 @@ internal static class Text
         ClickHold: "Hold to click: {0} ms",
         ClickHoldHint: "A click only counts when the button is held this long; shorter taps are ignored. 0 = off. Try 100-200 ms if clicks happen by accident.",
         SteadyWheel: "Steady scroll wheel",
-        Done: "Done");
+        Done: "Done",
+        About: "About Tremors",
+        MadeBy: "Made by {0}",
+        Free: "Tremors is free, and always will be.",
+        Latest: "Get the latest version");
 
     private static readonly Language Dutch = new(
         Code: "nl",
@@ -81,7 +89,11 @@ internal static class Text
         ClickHold: "Vasthouden om te klikken: {0} ms",
         ClickHoldHint: "Een klik telt pas als de knop zo lang wordt ingedrukt; kortere tikjes worden genegeerd. 0 = uit. Probeer 100-200 ms als er per ongeluk geklikt wordt.",
         SteadyWheel: "Scrollwiel stabiel houden",
-        Done: "Klaar");
+        Done: "Klaar",
+        About: "Over Tremors",
+        MadeBy: "Gemaakt door {0}",
+        Free: "Tremors is gratis, en dat blijft altijd zo.",
+        Latest: "Nieuwste versie ophalen");
 
     private static readonly Language French = new(
         Code: "fr",
@@ -105,7 +117,11 @@ internal static class Text
         ClickHold: "Maintenir pour cliquer : {0} ms",
         ClickHoldHint: "Un clic ne compte que si le bouton est maintenu aussi longtemps ; les pressions plus courtes sont ignorées. 0 = désactivé. Essayez 100 à 200 ms en cas de clics involontaires.",
         SteadyWheel: "Stabiliser la molette",
-        Done: "Terminé");
+        Done: "Terminé",
+        About: "À propos de Tremors",
+        MadeBy: "Créé par {0}",
+        Free: "Tremors est gratuit, et le restera toujours.",
+        Latest: "Obtenir la dernière version");
 
     private static readonly Language German = new(
         Code: "de",
@@ -129,7 +145,11 @@ internal static class Text
         ClickHold: "Zum Klicken halten: {0} ms",
         ClickHoldHint: "Ein Klick zählt erst, wenn die Taste so lange gedrückt wird; kürzeres Antippen wird ignoriert. 0 = aus. Versuchen Sie 100–200 ms, wenn versehentlich geklickt wird.",
         SteadyWheel: "Mausrad stabilisieren",
-        Done: "Fertig");
+        Done: "Fertig",
+        About: "Über Tremors",
+        MadeBy: "Entwickelt von {0}",
+        Free: "Tremors ist kostenlos, und das bleibt auch so.",
+        Latest: "Neueste Version herunterladen");
 
     /// <summary>All languages, in the order of the flags.</summary>
     public static IReadOnlyList<Language> All { get; } = [Dutch, English, French, German];
@@ -161,10 +181,17 @@ internal static class Text
     public static string ClickHoldHint => Current.ClickHoldHint;
     public static string SteadyWheel => Current.SteadyWheel;
     public static string Done => Current.Done;
+    public static string About => Current.About;
+    public static string Free => Current.Free;
+    public static string Latest => Current.Latest;
 
     public static string TooltipOn(int strength) => string.Format(Current.TooltipOn, strength);
     public static string Strength(int strength) => string.Format(Current.Strength, strength);
     public static string PointerSpeed(int percent) => string.Format(Current.PointerSpeed, percent);
     public static string StillZone(int pixels) => string.Format(Current.StillZone, pixels);
     public static string ClickHold(int milliseconds) => string.Format(Current.ClickHold, milliseconds);
+    public static string MadeBy(string maker) => string.Format(Current.MadeBy, maker);
+
+    /// <summary>A month in the current language, such as "november 2026".</summary>
+    public static string Month(DateTime month) => month.ToString("MMMM yyyy", CultureInfo.GetCultureInfo(Current.Code));
 }

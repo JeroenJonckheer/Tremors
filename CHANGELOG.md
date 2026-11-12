@@ -4,6 +4,13 @@ All notable changes to Tremors are listed here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the
 project uses [semantic versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- "About Tremors" link in the settings window: version, build month, maker, and a link to
+  the latest version.
+
 ## [1.1.1] - 2026-11-11
 
 ### Changed

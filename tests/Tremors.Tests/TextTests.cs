@@ -42,8 +42,14 @@ public class TextTests
             Assert.Equal("fr", Text.CurrentCode);
             Assert.Equal("Terminé", Text.Done);
 
+            Assert.Equal("novembre 2026", Text.Month(new DateTime(2026, 11, 1)));
+
             Text.Use("de");
             Assert.Equal("Fertig", Text.Done);
+            Assert.Equal("November 2026", Text.Month(new DateTime(2026, 11, 1)));
+
+            Text.Use("nl");
+            Assert.Equal("november 2026", Text.Month(new DateTime(2026, 11, 1)));
 
             Text.Use("xx"); // unknown: follow Windows again
             Assert.Equal(Text.Pick(CultureInfo.CurrentUICulture).Code, Text.CurrentCode);

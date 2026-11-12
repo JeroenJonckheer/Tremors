@@ -36,6 +36,8 @@
   <ItemGroup>
     <InternalsVisibleTo Include="Tremors.Tests" />
     <InternalsVisibleTo Include="DemoTrace" />
+    <!-- The month this build was made, shown in the About window. -->
+    <AssemblyMetadata Include="BuildMonth" Value="$([System.DateTime]::UtcNow.ToString('yyyy-MM'))" />
   </ItemGroup>
 
 </Project>
