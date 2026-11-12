@@ -8,7 +8,7 @@ project uses [semantic versioning](https://semver.org/).
 
 ### Changed
 
-- New icon: a steady mouse pointer with the absorbed tremor as two mint echoes behind it,
+- New icon: a calm mouse pointer with the absorbed tremor as two mint echoes behind it,
   clearly visible at the small size of the notification area.
 
 ## [1.1.0] - 2026-11-11

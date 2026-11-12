@@ -1,4 +1,4 @@
-"""Renders the Tremors icon: a steady mouse pointer with two mint echoes behind it, the
+"""Renders the Tremors icon: a calm mouse pointer with two mint echoes behind it, the
 tremor that is being absorbed. The echoes are offset far and drawn strongly on purpose,
 so they stay visible at 16 px in the notification area. Navy and mint when active, grey
 when paused.

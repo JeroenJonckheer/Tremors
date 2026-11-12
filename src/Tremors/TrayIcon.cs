@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace Tremors;
 
 /// <summary>
-/// Draws the Tremors icon in code: a steady mouse pointer with two mint echoes behind
+/// Draws the Tremors icon in code: a calm mouse pointer with two mint echoes behind
 /// it, the tremor that is being absorbed. Navy and mint when active, grey when
 /// paused. The same design is in Tremors.ico and docs/icon.png (tools/make_icon.py).
 /// </summary>

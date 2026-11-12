@@ -17,7 +17,7 @@
     <Version>1.1.1</Version>
     <Product>Tremors</Product>
     <Authors>Jeroen Jonckheer</Authors>
-    <Description>Steady mouse for people with a tremor. Free and open source.</Description>
+    <Description>Calm mouse movement for people with a tremor. Free and open source.</Description>
     <Copyright>Copyright © 2026 Jeroen Jonckheer</Copyright>
     <RepositoryUrl>https://github.com/JeroenJonckheer/Tremors</RepositoryUrl>
   </PropertyGroup>

@@ -29,7 +29,7 @@ Changing the position inside such a hook has no effect: Windows ignores it. So f
 movement Tremors does this instead:
 
 0. While filtering, Windows mouse acceleration ("Enhance pointer precision") is switched
-   off for the session, as SteadyMouse also does. Acceleration enlarges fast movements,
+   off for the session. Acceleration enlarges fast movements,
    and trembling is fast, so shakes would otherwise reach the filter magnified. The
    change is not saved to the user profile and is undone on pause or exit.
 1. Read where Windows *would* put the cursor (`pt` in the event) and where it is now.

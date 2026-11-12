@@ -4,7 +4,7 @@
 
 # Tremors
 
-**A steady mouse for shaky hands.**
+**A calm mouse for shaky hands.**
 Free, open source and private. One small program for Windows.
 
 [![CI](https://github.com/JeroenJonckheer/Tremors/actions/workflows/ci.yml/badge.svg)](https://github.com/JeroenJonckheer/Tremors/actions/workflows/ci.yml)
