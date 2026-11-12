@@ -52,9 +52,10 @@ everyone who needs the same.
 
 1. Download [**Tremors.exe**](https://github.com/JeroenJonckheer/Tremors/releases/latest).
 2. Put it somewhere permanent, for example in `Documents` or `C:\Program Files\Tremors`.
-3. Double-click it. A round blue icon with a mouse pointer appears next to the clock, and the
-   mouse is steadied right away.
-4. Click the icon and tick **Start with Windows**, so it is always on.
+3. Double-click it. The settings window opens and the mouse is steadied right away. A round
+   blue icon with a mouse pointer appears next to the clock.
+4. Tick **Start with Windows**, so it is always on. Windows then starts Tremors quietly at
+   every sign-in; you only see the icon next to the clock.
 
 No installation, no administrator rights and no .NET download are needed.
 

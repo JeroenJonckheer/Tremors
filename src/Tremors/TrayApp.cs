@@ -28,7 +28,11 @@ internal sealed class TrayApp : ApplicationContext
 
     public Settings Settings => _settings;
 
-    public TrayApp()
+    /// <param name="startedByWindows">
+    /// True when Windows started Tremors at sign-in: then it starts quietly in the notification
+    /// area. Started by hand, it opens the settings window, so the user sees that it runs.
+    /// </param>
+    public TrayApp(bool startedByWindows)
     {
         _settings = Store.Load(out bool firstRun);
         Text.Use(_settings.Language);
@@ -62,6 +66,8 @@ internal sealed class TrayApp : ApplicationContext
 
         Apply();
 
+        if (!startedByWindows)
+            ShowSettings();
         if (firstRun)
             _tray.ShowBalloonTip(8000, Text.WelcomeTitle, Text.WelcomeBody, ToolTipIcon.Info);
     }

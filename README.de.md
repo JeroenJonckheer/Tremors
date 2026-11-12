@@ -48,9 +48,10 @@ kostenlos für alle, die dasselbe brauchen.
 
 1. Laden Sie [**Tremors.exe**](https://github.com/JeroenJonckheer/Tremors/releases/latest) herunter.
 2. Legen Sie die Datei an einem festen Ort ab, zum Beispiel in `Dokumente` oder in `C:\Program Files\Tremors`.
-3. Doppelklicken Sie darauf. Neben der Uhr erscheint ein rundes blaues Symbol mit einem
-   Mauszeiger, und die Maus wird sofort ruhig gehalten.
-4. Klicken Sie auf das Symbol und aktivieren Sie **Mit Windows starten**, damit es immer läuft.
+3. Doppelklicken Sie darauf. Das Einstellungsfenster öffnet sich und die Maus wird sofort
+   ruhig gehalten. Neben der Uhr erscheint ein rundes blaues Symbol mit einem Mauszeiger.
+4. Aktivieren Sie **Mit Windows starten**, damit es immer läuft. Windows startet Tremors dann
+   bei jeder Anmeldung unauffällig; Sie sehen nur das Symbol neben der Uhr.
 
 Eine Installation ist nicht nötig: keine Administratorrechte und kein .NET erforderlich.
 

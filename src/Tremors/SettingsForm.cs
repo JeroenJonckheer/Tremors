@@ -17,6 +17,10 @@ internal sealed class SettingsForm : Form
     private readonly CheckBox _wheel = NewCheckBox();
     private readonly CheckBox _autoStart = NewCheckBox();
     private readonly Button _done = new() { AutoSize = true, Anchor = AnchorStyles.Right, Margin = new Padding(0, 16, 0, 0) };
+    private readonly Label _keepsRunning = new()
+    {
+        AutoSize = true, ForeColor = SystemColors.GrayText, Margin = new Padding(0, 20, 0, 0),
+    };
     private readonly LinkLabel _about = new()
     {
         AutoSize = true, Anchor = AnchorStyles.Left | AnchorStyles.Bottom, Margin = new Padding(0, 16, 0, 4),
@@ -71,8 +75,11 @@ internal sealed class SettingsForm : Form
         grid.Controls.Add(_clickHold, 1, 2);
         grid.Controls.Add(_wheel, 0, 3);
         grid.Controls.Add(_autoStart, 1, 3);
-        grid.Controls.Add(_about, 0, 4);
-        grid.Controls.Add(_done, 1, 4);
+        _keepsRunning.MaximumSize = new Size(2 * width + gap, 0);
+        grid.Controls.Add(_keepsRunning, 0, 4);
+        grid.SetColumnSpan(_keepsRunning, 2);
+        grid.Controls.Add(_about, 0, 5);
+        grid.Controls.Add(_done, 1, 5);
         Controls.Add(grid);
 
         _active.CheckedChanged += (_, _) => { if (!_refreshing) _app.SetEnabled(_active.Checked); };
@@ -141,6 +148,7 @@ internal sealed class SettingsForm : Form
         _autoStart.Text = Tremors.Text.StartWithWindows;
         _autoStart.Checked = s.AutoStart;
         _done.Text = Tremors.Text.Done;
+        _keepsRunning.Text = Tremors.Text.KeepsRunning;
         _about.Text = Tremors.Text.About;
         foreach (var (code, button) in _flags)
             button.FlatAppearance.BorderSize = code == Tremors.Text.CurrentCode ? LogicalToDeviceUnits(2) : 0;

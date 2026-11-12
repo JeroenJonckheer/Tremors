@@ -47,9 +47,10 @@ gratuit pour tous ceux qui en ont besoin.
 
 1. Téléchargez [**Tremors.exe**](https://github.com/JeroenJonckheer/Tremors/releases/latest).
 2. Placez le fichier à un endroit fixe, par exemple dans `Documents` ou dans `C:\Program Files\Tremors`.
-3. Double-cliquez dessus. Une icône ronde bleue avec un pointeur de souris apparaît près
-   de l’horloge, et la souris est immédiatement stabilisée.
-4. Cliquez sur l’icône et cochez **Démarrer avec Windows** pour qu’il soit toujours actif.
+3. Double-cliquez dessus. La fenêtre des paramètres s’ouvre et la souris est immédiatement
+   stabilisée. Une icône ronde bleue avec un pointeur de souris apparaît près de l’horloge.
+4. Cochez **Démarrer avec Windows** pour qu’il soit toujours actif. Windows lance alors
+   Tremors discrètement à chaque ouverture de session ; seule l’icône près de l’horloge est visible.
 
 Aucune installation n’est nécessaire : ni droits d’administrateur, ni .NET.
 

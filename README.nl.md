@@ -47,9 +47,10 @@ gratis voor iedereen die hetzelfde nodig heeft.
 
 1. Download [**Tremors.exe**](https://github.com/JeroenJonckheer/Tremors/releases/latest).
 2. Zet het bestand op een vaste plek, bijvoorbeeld in `Documenten` of in `C:\Program Files\Tremors`.
-3. Dubbelklik erop. Naast de klok verschijnt een rond blauw icoon met een muisaanwijzer en de
-   muis wordt meteen stabiel gehouden.
-4. Klik op het icoon en vink **Starten met Windows** aan, zodat het altijd aanstaat.
+3. Dubbelklik erop. Het instellingenvenster gaat open en de muis wordt meteen stabiel
+   gehouden. Naast de klok verschijnt een rond blauw icoon met een muisaanwijzer.
+4. Vink **Starten met Windows** aan, zodat het altijd aanstaat. Windows start Tremors dan bij
+   elke aanmelding stilletjes op; u ziet alleen het icoon naast de klok.
 
 Er hoeft niets geïnstalleerd te worden: geen beheerdersrechten en geen .NET nodig.
 

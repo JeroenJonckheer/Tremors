@@ -6,7 +6,7 @@ internal static class Program
     public const string ShowSettingsEvent = @"Local\Tremors.ShowSettings";
 
     [STAThread]
-    private static void Main()
+    private static void Main(string[] args)
     {
         // One instance per user session. Starting Tremors again opens the settings
         // of the instance that is already running.
@@ -22,6 +22,6 @@ internal static class Program
         AppDomain.CurrentDomain.ProcessExit += (_, _) => PointerAcceleration.Restore();
 
         ApplicationConfiguration.Initialize();
-        Application.Run(new TrayApp());
+        Application.Run(new TrayApp(AutoStart.StartedByWindows(args)));
     }
 }

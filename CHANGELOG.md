@@ -4,6 +4,14 @@ All notable changes to Tremors are listed here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the
 project uses [semantic versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Changed
+
+- Starting Tremors by hand opens the settings window, so it is clear that it runs. When
+  Windows starts it at sign-in, it stays quietly in the notification area as before.
+- The settings window explains that Tremors keeps working after the window is closed.
+
 ## [1.2.0] - 2026-11-12
 
 ### Added

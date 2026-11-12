@@ -34,6 +34,7 @@ internal static class Text
         string ClickHoldHint,
         string SteadyWheel,
         string Done,
+        string KeepsRunning,
         string About,
         string MadeBy,
         string Free,
@@ -62,6 +63,7 @@ internal static class Text
         ClickHoldHint: "A click only counts when the button is held this long; shorter taps are ignored. 0 = off. Try 100-200 ms if clicks happen by accident.",
         SteadyWheel: "Steady scroll wheel",
         Done: "Done",
+        KeepsRunning: "Tremors keeps working when you close this window. You will find it at the bottom right of the screen, next to the clock.",
         About: "About Tremors",
         MadeBy: "Made by {0}",
         Free: "Tremors is free, and always will be.",
@@ -90,6 +92,7 @@ internal static class Text
         ClickHoldHint: "Een klik telt pas als de knop zo lang wordt ingedrukt; kortere tikjes worden genegeerd. 0 = uit. Probeer 100-200 ms als er per ongeluk geklikt wordt.",
         SteadyWheel: "Scrollwiel stabiel houden",
         Done: "Klaar",
+        KeepsRunning: "Tremors blijft gewoon werken als u dit venster sluit. U vindt het rechtsonder in beeld, bij de klok.",
         About: "Over Tremors",
         MadeBy: "Gemaakt door {0}",
         Free: "Tremors is gratis en dat blijft altijd zo.",
@@ -118,6 +121,7 @@ internal static class Text
         ClickHoldHint: "Un clic ne compte que si le bouton est maintenu aussi longtemps ; les pressions plus courtes sont ignorées. 0 = désactivé. Essayez 100 à 200 ms en cas de clics involontaires.",
         SteadyWheel: "Stabiliser la molette",
         Done: "Terminé",
+        KeepsRunning: "Tremors continue de fonctionner quand vous fermez cette fenêtre. Vous le trouverez en bas à droite de l’écran, près de l’horloge.",
         About: "À propos de Tremors",
         MadeBy: "Créé par {0}",
         Free: "Tremors est gratuit, et le restera toujours.",
@@ -146,6 +150,7 @@ internal static class Text
         ClickHoldHint: "Ein Klick zählt erst, wenn die Taste so lange gedrückt wird; kürzeres Antippen wird ignoriert. 0 = aus. Versuchen Sie 100–200 ms, wenn versehentlich geklickt wird.",
         SteadyWheel: "Mausrad stabilisieren",
         Done: "Fertig",
+        KeepsRunning: "Tremors arbeitet weiter, wenn Sie dieses Fenster schließen. Sie finden es unten rechts auf dem Bildschirm, neben der Uhr.",
         About: "Über Tremors",
         MadeBy: "Entwickelt von {0}",
         Free: "Tremors ist kostenlos, und das bleibt auch so.",
@@ -181,6 +186,7 @@ internal static class Text
     public static string ClickHoldHint => Current.ClickHoldHint;
     public static string SteadyWheel => Current.SteadyWheel;
     public static string Done => Current.Done;
+    public static string KeepsRunning => Current.KeepsRunning;
     public static string About => Current.About;
     public static string Free => Current.Free;
     public static string Latest => Current.Latest;
