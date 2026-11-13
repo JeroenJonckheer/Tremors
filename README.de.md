@@ -33,10 +33,13 @@ kostenlos für alle, die dasselbe brauchen.
 
 - **Hält den Mauszeiger ruhig.** Zittern und plötzliche Ruckler werden herausgefiltert;
   wer auf einer Schaltfläche stillhält, hält auch den Zeiger still.
-- **Klicks bleiben im Ziel.** Im Moment des Klicks hört der Zeiger auf zu gleiten.
+- **Hält an, wenn Sie anhalten.** Sobald die Hand stillsteht oder klickt, steht auch der
+  Zeiger still. Er schießt nicht über die Schaltfläche hinaus.
 - **Ignoriert versehentliche Klicks** (optional). Ein Klick zählt erst, wenn die Taste kurz
   gehalten wird; ein zitterndes Antippen wird ignoriert. Ziehen und Doppelklicken
   funktionieren weiterhin.
+- **Bei Zittern langsamer** (optional). Zittert die Hand, bewegt sich der Zeiger langsamer,
+  sodass das Zittern auf dem Bildschirm kleiner wirkt. Gerade Bewegungen bleiben gleich schnell.
 - **Hält das Mausrad ruhig.** Ein zitterndes Hin und Her wird ignoriert, damit eine Seite
   nicht auf und ab springt.
 - **Einfach einzustellen.** Ein Regler für die Stärke und ein paar weitere zur Feinabstimmung.
@@ -76,9 +79,9 @@ Das Einstellungsfenster:
 | Einstellung | Bedeutung |
 |---|---|
 | **Stärke** (0-100) | Wie viel Zittern herausgefiltert wird. Beginnen Sie mit 70. Zittert der Zeiger noch, erhöhen Sie den Wert; fühlt sich die Maus träge an, senken Sie ihn. 0 schaltet den Filter aus. |
-| **Zeigergeschwindigkeit** (10-100 %) | Wie weit sich der Zeiger bei einer Handbewegung bewegt. Niedriger lässt das Zittern auf dem Bildschirm kleiner wirken; Sie bewegen die Maus dann etwas weiter. Versuchen Sie 50-70 % bei starkem Zittern. |
 | **Ruhezone** (0-30 px) | Der Zeiger bleibt stehen, bis sich die Hand weiter als diese Strecke bewegt. Erhöhen Sie sie, wenn der Zeiger noch springt, während Sie auf einer Schaltfläche stillzuhalten versuchen. |
 | **Zum Klicken halten** (0-500 ms) | Ein Klick zählt erst, wenn die Taste so lange gedrückt wird; kürzeres Antippen wird ignoriert. 0 = aus. Versuchen Sie 100-200 ms, wenn versehentlich geklickt wird. |
+| **Bei Zittern verlangsamen** | Zittert die Hand, bewegt sich der Zeiger langsamer, sodass das Zittern auf dem Bildschirm kleiner wirkt. Gerade Bewegungen bleiben gleich schnell. Ist das Häkchen gesetzt, stellt ein Regler ein, wie viel langsamer (0-90 %, beginnen Sie mit 60 %). Standardmäßig aus. |
 | Flaggen (oben rechts) | Sprache von Tremors. |
 | **Mausrad stabilisieren** | Ignoriert ein Scrollen in die Gegenrichtung direkt nach einem Scrollen; das ist meistens ein Zittern. |
 | **Mit Windows starten** | Startet Tremors automatisch bei der Anmeldung. |
@@ -90,7 +93,7 @@ Solange Tremors aktiv ist, schaltet es die Mausbeschleunigung von Windows aus
 Ihre eigene Einstellung kehrt zurück, sobald Tremors pausiert oder beendet wird.
 
 **Die richtigen Einstellungen finden:** Beginnen Sie mit Stärke 70. Kommen noch Ruckler
-durch? Senken Sie zuerst die Zeigergeschwindigkeit, erhöhen Sie dann die Ruhezone und erst
+durch? Aktivieren Sie zuerst „Bei Zittern verlangsamen“, erhöhen Sie dann die Ruhezone und erst
 danach die Stärke. Wählen Sie die niedrigsten Werte, bei denen der Zeiger ruhig bleibt;
 so reagiert die Maus so direkt wie möglich.
 

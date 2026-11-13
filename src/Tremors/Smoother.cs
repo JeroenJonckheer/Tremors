@@ -2,7 +2,7 @@ namespace Tremors;
 
 /// <summary>
 /// Tremor filter. Raw mouse movement is swallowed and replaced by a smoothed
-/// cursor position, computed in four steps:
+/// cursor position, computed in five steps:
 /// <list type="number">
 ///   <item><b>Raw position.</b> Every swallowed event adds its movement to a
 ///   virtual "raw" cursor that follows the hand, scaled by the pointer speed.</item>
@@ -16,6 +16,9 @@ namespace Tremors;
 ///   <item><b>Leash.</b> The visible cursor only moves once the smoothed position is
 ///   more than a few pixels away, and then trails it at that distance. Jitter
 ///   while holding still on a target never reaches the screen.</item>
+///   <item><b>Stop with the hand.</b> When no mouse events arrive for a moment, the hand
+///   has stopped: the rest of the glide is dropped, so the cursor stays where the user saw
+///   it instead of drifting past the target.</item>
 /// </list>
 /// The scroll wheel is debounced: a notch in the opposite direction shortly after
 /// a notch is treated as a tremor and dropped.
@@ -29,12 +32,21 @@ internal sealed class Smoother
     /// <param name="IntentSpeed">Speed above the threshold (px/ms) at which smoothing halves.</param>
     /// <param name="IntentWindowMs">Time over which hand speed is averaged.</param>
     /// <param name="MaxWheelGuardMs">Wheel debounce.</param>
+    /// <param name="HandStopMs">No mouse events for this long means the hand has stopped.</param>
     internal sealed record Tuning(
         double MaxTimeConstantMs = 500,
         double IntentThreshold = 0.5,
         double IntentSpeed = 0.2,
         double IntentWindowMs = 250,
-        double MaxWheelGuardMs = 400);
+        double MaxWheelGuardMs = 400,
+        double HandStopMs = 25);
+
+    /// <summary>
+    /// When the hand stops, the cursor stops too: the rest of the glide is dropped.
+    /// Without this the cursor keeps catching up with the hand for a moment and
+    /// overshoots the spot where the user saw it when stopping.
+    /// </summary>
+    public bool StopWithHand { get; set; } = true;
 
     private const double MaxStepMs = 50; // cap for long pauses between updates
 
@@ -53,6 +65,7 @@ internal sealed class Smoother
     private double _fltX, _fltY;     // smoothed position
     private int _curX, _curY;        // where we last put the cursor
     private long _lastStep;
+    private long _lastMove;          // time of the last mouse event
 
     private int _wheelDirection;
     private long _wheelTime;
@@ -117,6 +130,7 @@ internal sealed class Smoother
         var screen = _screen();
         _rawX = Math.Clamp(_rawX + (x - cursor.X) * _gain, screen.Left, screen.Right - 1);
         _rawY = Math.Clamp(_rawY + (y - cursor.Y) * _gain, screen.Top, screen.Bottom - 1);
+        _lastMove = now;
         Step(now);
     }
 
@@ -124,6 +138,13 @@ internal sealed class Smoother
     public void Step(long now)
     {
         if (!_synced) return;
+
+        if (StopWithHand && now - _lastMove >= _tuning.HandStopMs)
+        {
+            Click();   // the hand stopped: so does the cursor, right where it is
+            _lastStep = now;
+            return;
+        }
 
         double elapsed = now - _lastStep;
         if (elapsed <= 0) return;

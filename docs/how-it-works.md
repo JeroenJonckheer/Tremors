@@ -1,6 +1,6 @@
 # How Tremors works
 
-Tremors is a Windows tray application of about 750 lines of C#, comments included. This page explains the
+Tremors is a Windows tray application of about 1,700 lines of C#, comments included. This page explains the
 mechanism and the filter, so that anyone can check, tune or improve it.
 
 ## Source map
@@ -11,6 +11,7 @@ mechanism and the filter, so that anyone can check, tune or improve it.
 | [`TrayApp.cs`](../src/Tremors/TrayApp.cs) | The application: tray icon, menu, hook, timer, settings |
 | [`Mouse.cs`](../src/Tremors/Mouse.cs) | The low-level mouse hook and cursor calls (Win32) |
 | [`Smoother.cs`](../src/Tremors/Smoother.cs) | The tremor filter; testable without a real mouse |
+| [`ShakeBrake.cs`](../src/Tremors/ShakeBrake.cs) | Slow down when shaking: lowers the speed while the hand goes back and forth |
 | [`SettingsForm.cs`](../src/Tremors/SettingsForm.cs) | The settings window |
 | [`Settings.cs`](../src/Tremors/Settings.cs), [`Store.cs`](../src/Tremors/Store.cs) | The settings and their JSON file |
 | [`ClickGuard.cs`](../src/Tremors/ClickGuard.cs) | Ignores accidental clicks (hold to click) |
@@ -33,8 +34,7 @@ movement Tremors does this instead:
    and trembling is fast, so shakes would otherwise reach the filter magnified. The
    change is not saved to the user profile and is undone on pause or exit.
 1. Read where Windows *would* put the cursor (`pt` in the event) and where it is now.
-   The difference is the movement of the hand, including the user's pointer speed and
-   acceleration settings.
+   The difference is the movement of the hand, including the Windows pointer speed.
 2. Swallow the event, so the cursor does not move by itself.
 3. Compute a steady position and move the cursor there with `SetCursorPos`.
 
@@ -47,7 +47,8 @@ pass through untouched.
 The filter keeps these positions:
 
 ```
-raw     where the hand is: the sum of all swallowed movement, times the pointer speed
+raw     where the hand is: the sum of all swallowed movement (times the speed factor
+        of "slow down when shaking", when that is on)
 mid     first filter stage
 smooth  second filter stage
 cursor  what is on screen
@@ -98,12 +99,24 @@ removes the last pixel of wobble when holding still on a target; a larger zone a
 absorbs bigger jerks, at the cost of having to move a little further before the cursor
 starts to follow (the "lazy mouse" or "pulled string" technique from drawing tools).
 
-### 4. Click
+### 4. Stop with the hand
+
+Because the filter runs behind the hand, the cursor used to keep gliding for a moment
+after the hand stopped. The user stops when they *see* the cursor on the target, so that
+glide carried it past the target and called for tiny corrections.
+
+A mouse reports movement, not a position, so the cursor does not have to end up where
+the sum of the movement would put it. When no mouse event arrives for 25 ms, the hand has
+stopped: Tremors drops the rest of the glide, exactly as on a click (below), and the
+cursor stays where the user saw it. A trembling hand keeps sending events, so the filter
+keeps working while it shakes.
+
+### 5. Click
 
 On a button press the remaining glide is dropped (`raw`, `mid`, `smooth` and the velocity jump to the cursor),
 so the cursor does not drift while clicking or double-clicking.
 
-### 5. Hold to click
+### 6. Hold to click
 
 With **hold to click** set (for example 150 ms), a physical button-down is swallowed and
 the cursor stays put. If the button is released sooner, the click is dropped: a
@@ -115,7 +128,7 @@ to Windows itself (`SendInput`), and the physical button-up later passes normall
   between them is unchanged;
 - each button (left, right, middle) is handled on its own.
 
-### 6. Scroll wheel
+### 7. Scroll wheel
 
 A tremor often turns the wheel one notch forward and immediately back. Tremors drops a
 notch in the opposite direction when it comes within `400 ms * k` of the previous notch.
@@ -127,7 +140,31 @@ A real change of direction after that pause passes normally.
   Tremors notices that the cursor is not where it left it and starts again from there.
 - `raw` is clamped to the desktop, so pushing into a screen edge does not build up an
   invisible offset.
-- At strength 0 nothing is filtered and every event passes through unchanged.
+- At strength 0 nothing is filtered and every event passes through unchanged, unless
+  "slow down when shaking" is on: then the cursor follows the hand directly, at the
+  speed the brake sets.
+
+## Slow down when shaking
+
+An optional setting, off by default, in the spirit of the Angle Mouse (Wobbrock et al.,
+CHI 2009). It never looks at what is on screen, only at the shape of the movement: over
+the last 250 ms it divides the net distance the hand covered by the length of its path.
+
+```
+straightness = |sum of movements| / sum of |movements|      (0..1)
+shaky        = clamp((0.8 - straightness) / (0.8 - 0.3), 0, 1)
+speed        = 1 - slowdown * shaky                          (followed over 80 ms)
+```
+
+A straight movement or a curve scores close to 1 and keeps full speed. A hand that goes
+back and forth scores close to 0 and gets the full slowdown (the slider, 0-90%, 60% by
+default), so the tremor becomes smaller on screen. A fast deliberate sweep with a tremor
+on top stays straight enough to keep its speed. The speed factor scales the hand
+movement before the filter, so both work together.
+
+This replaces the former pointer speed slider: Windows has the same setting, and this
+lowers the speed only while it helps. A lowered pointer speed from an older version is
+turned into this setting with a similar slowdown.
 
 ## Measured effect
 
@@ -148,6 +185,9 @@ after the hand stops.
 | 70 (default) | 0 px | 27 px | 0.24 s |
 | 85 | 0 px | 19 px | 0.6 s |
 | 100 | 0 px | 14 px | 1.1 s |
+
+The last column shows how far the filter runs behind the hand. Since version 1.3 the
+cursor no longer finishes that glide: it stops about 25 ms after the hand (step 4).
 
 The tests also check that deliberate movements end on target, also with tremor on
 top, that clicks stop the glide and that the wheel filter lets real reversals through.

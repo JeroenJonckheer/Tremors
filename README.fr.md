@@ -33,10 +33,14 @@ gratuit pour tous ceux qui en ont besoin.
 
 - **Stabilise le curseur.** Les tremblements et les secousses soudaines sont filtrés ; quand
   vous restez immobile sur un bouton, le curseur reste immobile aussi.
-- **Les clics restent sur leur cible.** Au moment du clic, le curseur cesse de glisser.
+- **S’arrête quand vous vous arrêtez.** Dès que la main s’arrête ou clique, le curseur
+  s’arrête aussi. Il ne dépasse plus le bouton.
 - **Ignore les clics involontaires** (facultatif). Un clic ne compte que si le bouton est
   maintenu un instant ; une pression tremblante est ignorée. Le glisser-déposer et le
   double-clic fonctionnent normalement.
+- **Ralentit en cas de tremblement** (facultatif). Quand la main tremble, le curseur
+  ralentit, le tremblement paraît donc plus petit à l’écran. Les mouvements droits gardent
+  leur vitesse.
 - **Stabilise la molette.** Un va-et-vient tremblant est ignoré, la page ne saute plus.
 - **Simple à régler.** Un curseur pour l’intensité, et quelques autres pour affiner.
 - **Parle votre langue.** Français, néerlandais, anglais ou allemand. Suit Windows, ou
@@ -75,9 +79,9 @@ La fenêtre des paramètres :
 | Paramètre | Signification |
 |---|---|
 | **Intensité** (0-100) | La quantité de tremblement filtrée. Commencez à 70. Le curseur tremble encore ? Augmentez. La souris semble lente ? Diminuez. 0 désactive le filtre. |
-| **Vitesse du pointeur** (10-100 %) | La distance parcourue par le curseur pour un mouvement de la main. Plus bas, le tremblement paraît plus petit à l’écran ; il faut alors déplacer la souris un peu plus. Essayez 50-70 % pour un tremblement fort. |
 | **Zone d’immobilité** (0-30 px) | Le curseur ne bouge pas tant que la main reste dans cette distance. Augmentez-la si le curseur saute encore quand vous essayez de rester sur un bouton. |
 | **Maintenir pour cliquer** (0-500 ms) | Un clic ne compte que si le bouton est maintenu aussi longtemps ; les pressions plus courtes sont ignorées. 0 = désactivé. Essayez 100-200 ms en cas de clics involontaires. |
+| **Ralentir en cas de tremblement** | Quand la main tremble, le curseur ralentit, le tremblement paraît donc plus petit à l’écran. Les mouvements droits gardent leur vitesse. Une fois coché, un curseur règle le ralentissement (0-90 %, commencez à 60 %). Désactivé par défaut. |
 | Drapeaux (en haut à droite) | Langue de Tremors. |
 | **Stabiliser la molette** | Ignore un défilement en sens inverse juste après un défilement ; c’est généralement un tremblement. |
 | **Démarrer avec Windows** | Lance Tremors automatiquement à l’ouverture de session. |
@@ -89,7 +93,7 @@ Tant que Tremors est actif, il désactive l’accélération de la souris de Win
 tremblants. Votre propre réglage est rétabli dès que Tremors est mis en pause ou fermé.
 
 **Trouver les bons réglages :** commencez avec l’intensité 70. Des secousses passent
-encore ? Baissez d’abord la vitesse du pointeur, puis augmentez la zone d’immobilité, et
+encore ? Cochez d’abord « Ralentir en cas de tremblement », puis augmentez la zone d’immobilité, et
 seulement ensuite l’intensité. Choisissez les valeurs les plus basses qui gardent le
 curseur calme ; la souris reste ainsi aussi réactive que possible.
 

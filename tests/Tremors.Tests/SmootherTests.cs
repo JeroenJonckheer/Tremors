@@ -23,6 +23,9 @@ public class SmootherTests
             Cursor = new Mouse.POINT { X = x, Y = y };
             Filter = new Smoother(MoveCursor, () => Desktop);
             Filter.Configure(intensity);
+            // Most tests check the filter maths: where a glide ends up. Stopping with
+            // the hand cuts that glide short on purpose and has its own test.
+            Filter.StopWithHand = false;
         }
 
         private Mouse.POINT MoveCursor(int x, int y)
@@ -239,5 +242,40 @@ public class SmootherTests
 
         Assert.True(filter.Wheel(120, now: 1000));
         Assert.True(filter.Wheel(-120, now: 1010));
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void With_stop_with_hand_the_cursor_stops_when_the_hand_stops(bool stopWithHand)
+    {
+        var rig = new Rig(intensity: 70);
+        rig.Filter.StopWithHand = stopWithHand;
+        for (int i = 0; i < 40; i++) rig.Hand(10, 0);   // a quick move of 400 px
+        int whenStopped = rig.Cursor.X;
+
+        rig.Wait(1000);
+
+        int glide = rig.Cursor.X - whenStopped;
+        if (stopWithHand)
+            Assert.InRange(glide, 0, 30);     // at most the few ms before the stop is noticed
+        else
+            Assert.True(glide > 100, $"glide {glide}");   // the old filter keeps catching up
+    }
+
+    [Theory]
+    [InlineData(100, 50)]
+    [InlineData(40, 20)]
+    public void At_strength_zero_the_cursor_follows_the_hand_at_the_pointer_speed(int percent, int expected)
+    {
+        // The shake brake steers through the filter even when the filter itself is off.
+        var rig = new Rig(intensity: 0);
+        rig.Filter.SetStillZone(0);
+        rig.Filter.SetPointerSpeed(percent);
+
+        for (int i = 0; i < 5; i++) rig.Hand(10, 0);
+
+        Assert.Equal(960 + expected, rig.Cursor.X);
+        Assert.Equal(540, rig.Cursor.Y);
     }
 }

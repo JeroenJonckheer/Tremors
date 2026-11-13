@@ -26,13 +26,14 @@ internal static class Text
         string IsOn,
         string Strength,
         string StrengthHint,
-        string PointerSpeed,
-        string PointerSpeedHint,
         string StillZone,
         string StillZoneHint,
         string ClickHold,
         string ClickHoldHint,
         string SteadyWheel,
+        string ShakeBrake,
+        string ShakeSlowdown,
+        string ShakeSlowdownHint,
         string Done,
         string KeepsRunning,
         string About,
@@ -55,13 +56,14 @@ internal static class Text
         IsOn: "Tremors is on",
         Strength: "Strength: {0}",
         StrengthHint: "0 = off. Higher = steadier, but the mouse responds a little slower.",
-        PointerSpeed: "Pointer speed: {0}%",
-        PointerSpeedHint: "Lower = the tremor looks smaller on screen, but you move the mouse further. Windows mouse acceleration is off while Tremors is on.",
         StillZone: "Still zone: {0} px",
         StillZoneHint: "The cursor stays put until the hand moves further than this. Larger absorbs bigger jerks.",
         ClickHold: "Hold to click: {0} ms",
         ClickHoldHint: "A click only counts when the button is held this long; shorter taps are ignored. 0 = off. Try 100-200 ms if clicks happen by accident.",
         SteadyWheel: "Steady scroll wheel",
+        ShakeBrake: "Slow down when shaking",
+        ShakeSlowdown: "Slowdown when shaking: {0}%",
+        ShakeSlowdownHint: "When the hand shakes, the cursor moves slower. Straight movements keep their speed.",
         Done: "Done",
         KeepsRunning: "Tremors keeps working when you close this window. You will find it at the bottom right of the screen, next to the clock.",
         About: "About Tremors",
@@ -84,13 +86,14 @@ internal static class Text
         IsOn: "Tremors staat aan",
         Strength: "Sterkte: {0}",
         StrengthHint: "0 = uit. Hoger = rustiger, maar de muis reageert iets trager.",
-        PointerSpeed: "Muissnelheid: {0}%",
-        PointerSpeedHint: "Lager = de trilling wordt kleiner op het scherm, maar u beweegt de muis verder. De muisversnelling van Windows staat uit zolang Tremors aanstaat.",
         StillZone: "Stilstandzone: {0} px",
         StillZoneHint: "De cursor blijft staan tot de hand verder beweegt dan dit. Groter vangt grotere schokken op.",
         ClickHold: "Vasthouden om te klikken: {0} ms",
         ClickHoldHint: "Een klik telt pas als de knop zo lang wordt ingedrukt; kortere tikjes worden genegeerd. 0 = uit. Probeer 100-200 ms als er per ongeluk geklikt wordt.",
         SteadyWheel: "Scrollwiel stabiel houden",
+        ShakeBrake: "Trager bij trillen",
+        ShakeSlowdown: "Vertraging bij trillen: {0}%",
+        ShakeSlowdownHint: "Trilt de hand, dan gaat de cursor trager. Rechte bewegingen blijven even snel.",
         Done: "Klaar",
         KeepsRunning: "Tremors blijft gewoon werken als u dit venster sluit. U vindt het rechtsonder in beeld, bij de klok.",
         About: "Over Tremors",
@@ -113,13 +116,14 @@ internal static class Text
         IsOn: "Tremors est activé",
         Strength: "Intensité : {0}",
         StrengthHint: "0 = désactivé. Plus élevé = plus stable, mais la souris réagit un peu plus lentement.",
-        PointerSpeed: "Vitesse du pointeur : {0} %",
-        PointerSpeedHint: "Plus bas = le tremblement paraît plus petit à l’écran, mais il faut déplacer la souris davantage. L’accélération de la souris de Windows est désactivée tant que Tremors est activé.",
         StillZone: "Zone d’immobilité : {0} px",
         StillZoneHint: "Le curseur ne bouge pas tant que la main reste dans cette distance. Plus grand absorbe des secousses plus fortes.",
         ClickHold: "Maintenir pour cliquer : {0} ms",
         ClickHoldHint: "Un clic ne compte que si le bouton est maintenu aussi longtemps ; les pressions plus courtes sont ignorées. 0 = désactivé. Essayez 100 à 200 ms en cas de clics involontaires.",
         SteadyWheel: "Stabiliser la molette",
+        ShakeBrake: "Ralentir en cas de tremblement",
+        ShakeSlowdown: "Ralentissement en cas de tremblement : {0} %",
+        ShakeSlowdownHint: "Quand la main tremble, le curseur ralentit. Les mouvements droits gardent leur vitesse.",
         Done: "Terminé",
         KeepsRunning: "Tremors continue de fonctionner quand vous fermez cette fenêtre. Vous le trouverez en bas à droite de l’écran, près de l’horloge.",
         About: "À propos de Tremors",
@@ -142,13 +146,14 @@ internal static class Text
         IsOn: "Tremors ist aktiv",
         Strength: "Stärke: {0}",
         StrengthHint: "0 = aus. Höher = ruhiger, aber die Maus reagiert etwas langsamer.",
-        PointerSpeed: "Zeigergeschwindigkeit: {0} %",
-        PointerSpeedHint: "Niedriger = das Zittern wirkt auf dem Bildschirm kleiner, aber Sie bewegen die Maus weiter. Die Mausbeschleunigung von Windows ist aus, solange Tremors aktiv ist.",
         StillZone: "Ruhezone: {0} px",
         StillZoneHint: "Der Zeiger bleibt stehen, bis sich die Hand weiter als diese Strecke bewegt. Größer fängt stärkere Ruckler ab.",
         ClickHold: "Zum Klicken halten: {0} ms",
         ClickHoldHint: "Ein Klick zählt erst, wenn die Taste so lange gedrückt wird; kürzeres Antippen wird ignoriert. 0 = aus. Versuchen Sie 100–200 ms, wenn versehentlich geklickt wird.",
         SteadyWheel: "Mausrad stabilisieren",
+        ShakeBrake: "Bei Zittern verlangsamen",
+        ShakeSlowdown: "Verlangsamung bei Zittern: {0} %",
+        ShakeSlowdownHint: "Zittert die Hand, bewegt sich der Zeiger langsamer. Gerade Bewegungen bleiben gleich schnell.",
         Done: "Fertig",
         KeepsRunning: "Tremors arbeitet weiter, wenn Sie dieses Fenster schließen. Sie finden es unten rechts auf dem Bildschirm, neben der Uhr.",
         About: "Über Tremors",
@@ -181,10 +186,11 @@ internal static class Text
     public static string TooltipOff => Current.TooltipOff;
     public static string IsOn => Current.IsOn;
     public static string StrengthHint => Current.StrengthHint;
-    public static string PointerSpeedHint => Current.PointerSpeedHint;
     public static string StillZoneHint => Current.StillZoneHint;
     public static string ClickHoldHint => Current.ClickHoldHint;
     public static string SteadyWheel => Current.SteadyWheel;
+    public static string ShakeBrake => Current.ShakeBrake;
+    public static string ShakeSlowdownHint => Current.ShakeSlowdownHint;
     public static string Done => Current.Done;
     public static string KeepsRunning => Current.KeepsRunning;
     public static string About => Current.About;
@@ -193,9 +199,9 @@ internal static class Text
 
     public static string TooltipOn(int strength) => string.Format(Current.TooltipOn, strength);
     public static string Strength(int strength) => string.Format(Current.Strength, strength);
-    public static string PointerSpeed(int percent) => string.Format(Current.PointerSpeed, percent);
     public static string StillZone(int pixels) => string.Format(Current.StillZone, pixels);
     public static string ClickHold(int milliseconds) => string.Format(Current.ClickHold, milliseconds);
+    public static string ShakeSlowdown(int percent) => string.Format(Current.ShakeSlowdown, percent);
     public static string MadeBy(string maker) => string.Format(Current.MadeBy, maker);
 
     /// <summary>A month in the current language, such as "november 2026".</summary>

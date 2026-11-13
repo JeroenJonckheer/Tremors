@@ -1,7 +1,7 @@
 namespace Tremors;
 
 /// <summary>
-/// The settings window: four sliders in two columns and three checkboxes, in large
+/// The settings window: sliders and checkboxes in two columns, in large
 /// text. Every change takes effect immediately; there is no Save button.
 /// </summary>
 internal sealed class SettingsForm : Form
@@ -11,11 +11,13 @@ internal sealed class SettingsForm : Form
     private readonly TrayApp _app;
     private readonly CheckBox _active = NewCheckBox();
     private readonly Slider _strength;
-    private readonly Slider _speed;
     private readonly Slider _stillZone;
     private readonly Slider _clickHold;
     private readonly CheckBox _wheel = NewCheckBox();
     private readonly CheckBox _autoStart = NewCheckBox();
+    private readonly CheckBox _shakeBrake = NewCheckBox();
+    private readonly Slider _shakeSlowdown;   // only shown while _shakeBrake is ticked
+    private bool? _slowdownShown;
     private readonly Button _done = new() { AutoSize = true, Anchor = AnchorStyles.Right, Margin = new Padding(0, 16, 0, 0) };
     private readonly Label _keepsRunning = new()
     {
@@ -45,9 +47,9 @@ internal sealed class SettingsForm : Form
 
         int width = LogicalToDeviceUnits(ColumnWidth);
         _strength = new Slider(0, 100, 5, width);
-        _speed = new Slider(Settings.MinPointerSpeed, 100, 5, width);
         _stillZone = new Slider(0, Settings.MaxStillZone, 1, width);
         _clickHold = new Slider(0, Settings.MaxClickHold, 10, width);
+        _shakeSlowdown = new Slider(0, Settings.MaxShakeSlowdown, 5, width - LogicalToDeviceUnits(28)); // indented
 
         _done.Click += (_, _) => Close();
         _about.Font = new Font(Font.FontFamily, 10f);
@@ -65,14 +67,25 @@ internal sealed class SettingsForm : Form
             Location = new Point(Padding.Left, Padding.Top),
         };
         int gap = LogicalToDeviceUnits(24);
-        _speed.Margin = _clickHold.Margin = new Padding(gap, _speed.Margin.Top, 0, 0);
+        _stillZone.Margin = new Padding(gap, _stillZone.Margin.Top, 0, 0);
         _autoStart.Margin = new Padding(gap, _wheel.Margin.Top, 0, 0);
+
+        // The shake brake: a checkbox, with its slider underneath only while it is ticked.
+        var shake = new FlowLayoutPanel
+        {
+            FlowDirection = FlowDirection.TopDown, WrapContents = false, AutoSize = true,
+            AutoSizeMode = AutoSizeMode.GrowAndShrink, Margin = new Padding(gap, _clickHold.Margin.Top, 0, 0),
+        };
+        _shakeBrake.Margin = Padding.Empty;
+        _shakeSlowdown.Margin = new Padding(LogicalToDeviceUnits(28), LogicalToDeviceUnits(8), 0, 0);
+        shake.Controls.AddRange([_shakeBrake, _shakeSlowdown]);
+
         grid.Controls.Add(_active, 0, 0);
         grid.Controls.Add(LanguageButtons(), 1, 0);
         grid.Controls.Add(_strength, 0, 1);
-        grid.Controls.Add(_speed, 1, 1);
-        grid.Controls.Add(_stillZone, 0, 2);
-        grid.Controls.Add(_clickHold, 1, 2);
+        grid.Controls.Add(_stillZone, 1, 1);
+        grid.Controls.Add(_clickHold, 0, 2);
+        grid.Controls.Add(shake, 1, 2);
         grid.Controls.Add(_wheel, 0, 3);
         grid.Controls.Add(_autoStart, 1, 3);
         _keepsRunning.MaximumSize = new Size(2 * width + gap, 0);
@@ -84,11 +97,12 @@ internal sealed class SettingsForm : Form
 
         _active.CheckedChanged += (_, _) => { if (!_refreshing) _app.SetEnabled(_active.Checked); };
         _strength.Bar.ValueChanged += (_, _) => { if (!_refreshing) _app.SetIntensity(_strength.Bar.Value); };
-        _speed.Bar.ValueChanged += (_, _) => { if (!_refreshing) _app.SetPointerSpeed(_speed.Bar.Value); };
         _stillZone.Bar.ValueChanged += (_, _) => { if (!_refreshing) _app.SetStillZone(_stillZone.Bar.Value); };
         _clickHold.Bar.ValueChanged += (_, _) => { if (!_refreshing) _app.SetClickHold(_clickHold.Bar.Value); };
         _wheel.CheckedChanged += (_, _) => { if (!_refreshing) _app.SetWheel(_wheel.Checked); };
         _autoStart.CheckedChanged += (_, _) => { if (!_refreshing) _app.SetAutoStart(_autoStart.Checked); };
+        _shakeBrake.CheckedChanged += (_, _) => { if (!_refreshing) _app.SetShakeBrake(_shakeBrake.Checked); };
+        _shakeSlowdown.Bar.ValueChanged += (_, _) => { if (!_refreshing) _app.SetShakeSlowdown(_shakeSlowdown.Bar.Value); };
 
         _app.Changed += RefreshFromSettings;
         FormClosed += (_, _) =>
@@ -139,7 +153,6 @@ internal sealed class SettingsForm : Form
         _active.Text = Tremors.Text.IsOn;
         _active.Checked = s.Enabled;
         _strength.Show(s.Intensity, Tremors.Text.Strength(s.Intensity), Tremors.Text.StrengthHint, s.Enabled);
-        _speed.Show(s.PointerSpeed, Tremors.Text.PointerSpeed(s.PointerSpeed), Tremors.Text.PointerSpeedHint, s.Enabled);
         _stillZone.Show(s.StillZone, Tremors.Text.StillZone(s.StillZone), Tremors.Text.StillZoneHint, s.Enabled);
         _clickHold.Show(s.ClickHold, Tremors.Text.ClickHold(s.ClickHold), Tremors.Text.ClickHoldHint, s.Enabled);
         _wheel.Text = Tremors.Text.SteadyWheel;
@@ -147,6 +160,18 @@ internal sealed class SettingsForm : Form
         _wheel.Enabled = s.Enabled;
         _autoStart.Text = Tremors.Text.StartWithWindows;
         _autoStart.Checked = s.AutoStart;
+        _shakeBrake.Text = Tremors.Text.ShakeBrake;
+        _shakeBrake.Checked = s.ShakeBrake;
+        _shakeBrake.Enabled = s.Enabled;
+        _shakeSlowdown.Show(s.ShakeSlowdown, Tremors.Text.ShakeSlowdown(s.ShakeSlowdown), Tremors.Text.ShakeSlowdownHint, s.Enabled);
+        if (_slowdownShown != s.ShakeBrake)
+        {
+            // Not Visible: that reads false until the window itself is shown.
+            // GrowAndShrink lets the window shrink again when the slider goes away.
+            AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            _shakeSlowdown.Visible = s.ShakeBrake;
+            _slowdownShown = s.ShakeBrake;
+        }
         _done.Text = Tremors.Text.Done;
         _keepsRunning.Text = Tremors.Text.KeepsRunning;
         _about.Text = Tremors.Text.About;
@@ -154,6 +179,7 @@ internal sealed class SettingsForm : Form
             button.FlatAppearance.BorderSize = code == Tremors.Text.CurrentCode ? LogicalToDeviceUnits(2) : 0;
 
         ResumeLayout();
+        AutoSizeMode = AutoSizeMode.GrowOnly;
         _refreshing = false;
     }
 

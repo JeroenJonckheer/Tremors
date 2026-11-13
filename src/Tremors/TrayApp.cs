@@ -8,6 +8,7 @@ internal sealed class TrayApp : ApplicationContext
 {
     private readonly Settings _settings;
     private readonly Smoother _filter = new();
+    private readonly ShakeBrake _brake = new();
     private readonly ClickGuard _clicks = new(Mouse.SendButtonDown);
     private readonly Mouse _mouse = new();
     private readonly System.Windows.Forms.Timer _timer = new() { Interval = 10 };
@@ -37,10 +38,10 @@ internal sealed class TrayApp : ApplicationContext
         _settings = Store.Load(out bool firstRun);
         Text.Use(_settings.Language);
         _filter.Configure(_settings.Intensity);
-        _filter.SetPointerSpeed(_settings.PointerSpeed);
         _filter.SetStillZone(_settings.StillZone);
         _filter.SetWheel(_settings.Wheel);
         _clicks.HoldMs = _settings.ClickHold;
+        _brake.MaxSlowdown = _settings.ShakeSlowdown / 100.0;
         _mouse.Filter = OnMouse;
         _timer.Tick += (_, _) => OnTimer();
         if (_settings.AutoStart) AutoStart.Enable(); // keep the path current if the exe moved
@@ -52,6 +53,7 @@ internal sealed class TrayApp : ApplicationContext
         _settingsItem = new ToolStripMenuItem(Text.Settings, null, (_, _) => ShowSettings());
         menu.Items.Add(_settingsItem);
         menu.Items.Add(_autoStartItem);
+
         menu.Items.Add(new ToolStripSeparator());
         _quitItem = new ToolStripMenuItem(Text.Quit, null, (_, _) => ExitThread());
         menu.Items.Add(_quitItem);
@@ -82,14 +84,6 @@ internal sealed class TrayApp : ApplicationContext
     {
         _settings.Intensity = Math.Clamp(value, 0, 100);
         _filter.Configure(_settings.Intensity);
-        Apply();
-    }
-
-    public void SetPointerSpeed(int percent)
-    {
-        _settings.PointerSpeed = percent;
-        _settings.Normalize();
-        _filter.SetPointerSpeed(_settings.PointerSpeed);
         Apply();
     }
 
@@ -128,6 +122,25 @@ internal sealed class TrayApp : ApplicationContext
         Apply();
     }
 
+    public void SetShakeBrake(bool on)
+    {
+        _settings.ShakeBrake = on;
+        _brake.Reset();
+        _filter.SetPointerSpeed(100);
+        Apply();
+    }
+
+    public void SetShakeSlowdown(int percent)
+    {
+        _settings.ShakeSlowdown = percent;
+        _settings.Normalize();
+        _brake.MaxSlowdown = _settings.ShakeSlowdown / 100.0;
+        Apply();
+    }
+
+    /// <summary>True when Tremors moves the cursor itself: the filter or the shake brake is on.</summary>
+    private bool Steering => _filter.Active || _settings.ShakeBrake;
+
     public void SetAutoStart(bool on)
     {
         _settings.AutoStart = on;
@@ -157,7 +170,7 @@ internal sealed class TrayApp : ApplicationContext
             _clicks.Reset();
         }
         _timer.Enabled = _mouse.Installed;
-        if (_mouse.Installed && _filter.Active) PointerAcceleration.Suspend();
+        if (_mouse.Installed && Steering) PointerAcceleration.Suspend();
         else PointerAcceleration.Restore();
 
         _activeItem.Checked = _settings.Enabled;
@@ -179,8 +192,15 @@ internal sealed class TrayApp : ApplicationContext
         {
             case Mouse.WM_MOUSEMOVE:
                 if (_clicks.Waiting) return false; // keep the cursor where the button went down
-                if (!_filter.Active) return true;
-                _filter.Move(data.pt.X, data.pt.Y, Mouse.CursorPosition(), now);
+                if (!Steering) return true;
+                var cursor = Mouse.CursorPosition();
+                if (_settings.ShakeBrake)
+                {
+                    // data.pt is where Windows would put the cursor, so this is the hand's movement.
+                    double factor = _brake.Update(data.pt.X - cursor.X, data.pt.Y - cursor.Y, now);
+                    _filter.SetPointerSpeed((int)Math.Round(100 * factor));
+                }
+                _filter.Move(data.pt.X, data.pt.Y, cursor, now);
                 return false;
 
             case Mouse.WM_MOUSEWHEEL:
