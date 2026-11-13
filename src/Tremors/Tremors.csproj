@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>1.2.0</Version>
+    <Version>1.3.0</Version>
     <Product>Tremors</Product>
     <Authors>Jeroen Jonckheer</Authors>
     <Description>Calm mouse movement for people with a tremor. Free and open source.</Description>

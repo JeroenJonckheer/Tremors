@@ -4,13 +4,29 @@ All notable changes to Tremors are listed here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the
 project uses [semantic versioning](https://semver.org/).
 
-## [Unreleased]
+## [1.3.0] - 2026-11-13
+
+### Added
+
+- Slow down when shaking (optional, off by default): while the hand goes back and forth,
+  the cursor moves slower, so the tremor looks smaller on screen. Straight movements and
+  fast deliberate sweeps keep their full speed. A slider sets how much slower (0-90%).
+- A printable Dutch guide for setting up a phone for a trembling hand
+  (`docs/phone-guide.nl.pdf`), linked from the Dutch README.
 
 ### Changed
 
+- The cursor stops when the hand stops. Before, it kept gliding for a moment to catch up
+  with the hand and could drift past the button the user had stopped on.
 - Starting Tremors by hand opens the settings window, so it is clear that it runs. When
   Windows starts it at sign-in, it stays quietly in the notification area as before.
 - The settings window explains that Tremors keeps working after the window is closed.
+
+### Removed
+
+- The pointer speed slider. Windows has the same setting, and slow down when shaking
+  lowers the speed only while it helps. A lowered pointer speed from an earlier version
+  is turned into slow down when shaking with a similar slowdown.
 
 ## [1.2.0] - 2026-11-12
 
@@ -63,6 +79,7 @@ First release.
 - Interface in English, Dutch, French and German, following the Windows display language.
 - Single-file `Tremors.exe`, no installation or .NET runtime needed.
 
+[1.3.0]: https://github.com/JeroenJonckheer/Tremors/releases/tag/v1.3.0
 [1.2.0]: https://github.com/JeroenJonckheer/Tremors/releases/tag/v1.2.0
 [1.1.1]: https://github.com/JeroenJonckheer/Tremors/releases/tag/v1.1.1
 [1.1.0]: https://github.com/JeroenJonckheer/Tremors/releases/tag/v1.1.0
